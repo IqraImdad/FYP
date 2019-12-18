@@ -15,6 +15,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void sum(int a , int b)
     {
+
+    }
+
+    private  void sub(int a)
+    {
         
     }
 }
