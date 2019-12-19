@@ -10,7 +10,6 @@
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:layout_marginTop="4dp"
         android:background="@color/colorGreen"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
@@ -34,7 +33,7 @@
             android:id="@+id/tvSelectedMonth"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="48dp"
+            android:layout_marginStart="8dp"
             android:text="March"
             android:textColor="@android:color/white"
             android:textStyle="bold"
@@ -49,7 +48,7 @@
             android:id="@+id/btnNextMonth"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="48dp"
+            android:layout_marginStart="8dp"
             android:background="@color/colorGreen"
             android:padding="8dp"
             android:src="@drawable/ic_next_white_24dp"
@@ -66,21 +65,18 @@
             android:text="+"
             android:textColor="@android:color/white"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.27"
-            app:layout_constraintStart_toEndOf="@+id/btnNextMonth" />
+
+            app:layout_constraintEnd_toStartOf="@+id/btnChain" />
 
         <Button
             android:id="@+id/btnChain"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="Chain"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toEndOf="@+id/btnAdd"
-            android:textColor="@android:color/white"
             android:background="@color/colorGreen"
+            android:text="Chain"
+            android:textColor="@android:color/white"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
 
@@ -89,9 +85,9 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvEvents"
         android:layout_width="match_parent"
-        android:layout_height=
+        android:layout_height="672dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
-        tools:listitem="@layout/event_list_item" />
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
