@@ -2,13 +2,13 @@ package com.iqra.dailydairy;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.iqra.dailydairy.utils.MonthProvider;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
@@ -18,6 +18,7 @@ import java.util.Date;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     ImageButton btnNextMonth, btnPreviousMonth;
+    Button btnAdd;
     TextView tvSelectedMonth;
     ArrayList<String> months;
     Calendar calendar;
@@ -32,8 +33,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void initComponents() {
         btnNextMonth = findViewById(R.id.btnNextMonth);
         btnPreviousMonth = findViewById(R.id.btnLastMonth);
+        btnAdd = findViewById(R.id.btnAdd);
         btnNextMonth.setOnClickListener(this);
         btnPreviousMonth.setOnClickListener(this);
+        btnAdd.setOnClickListener(this);
+
         tvSelectedMonth = findViewById(R.id.tvSelectedMonth);
 
         calendar = Calendar.getInstance();
@@ -48,6 +52,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         if (v == btnPreviousMonth) {
             previousMonth();
+        }
+        if (v == btnAdd) {
+           startActivity(new Intent(this,CreateEventActivity.class));
         }
     }
 
