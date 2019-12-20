@@ -21,4 +21,7 @@ public interface EventDao {
 
     @Query("SELECT * from event ORDER BY day ASC")
     List<Event> getEvents();
+
+    @Query("select * from event where month = :month and year = :year")
+    List<Event> getEventsOfMonth(String month, String year);
 }

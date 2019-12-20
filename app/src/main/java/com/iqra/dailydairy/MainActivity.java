@@ -8,6 +8,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.iqra.dailydairy.room.EventDao;
+import com.iqra.dailydairy.room.WordRoomDatabase;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -23,10 +27,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ArrayList<String> months;
     Calendar calendar;
     Date currentDate;
+    EventDao eventDao;
+
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        eventDao = WordRoomDatabase.getDatabase(this).eventDao();
         initComponents();
     }
 
@@ -43,6 +50,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         calendar = Calendar.getInstance();
         currentDate = calendar.getTime();
         tvSelectedMonth.setText(formatDate(currentDate));
+
+
     }
 
     @Override
@@ -72,6 +81,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private String formatDate(Date date) {
         SimpleDateFormat df = new SimpleDateFormat("MMM-yyyy");
-        return df.format(date);
+        String selectedDate = df.format(date);
+        String selectedMonth = selectedDate.split("-")[0];
+        String selectedYear = selectedDate.split("-")[1];
+        Toast.makeText(this, eventDao.getEventsOfMonth(selectedMonth,selectedYear).size()+ "", Toast.LENGTH_SHORT).show();
+
+        return selectedDate;
     }
 }

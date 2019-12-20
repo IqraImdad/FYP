@@ -50,5 +50,19 @@
         android:padding="12dp"
         android:textSize="18sp"
         android:layout_gravity="center"
-        android:textColor="@android:color/holo_blue_dark"/>
+        android:textColor="@android:color/holo_blue_dark"
+
+        />
+
+
+    <Button
+        android:layout_gravity="center"
+        android:id="@+id/btnSaveEvent"
+        android:layout_marginTop="4dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save Event"
+        />
+
+
 </LinearLayout>
