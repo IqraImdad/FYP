@@ -10,11 +10,12 @@
 
     <TextView
         android:id="@+id/tvEventTime"
+        android:layout_marginStart="8dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:text="9:00 am"
+        android:text=""
         app:layout_constraintBottom_toBottomOf="parent"
         android:textColor="@android:color/white"
         android:textSize="14sp" />
@@ -44,6 +45,7 @@
 
     <TextView
         android:layout_gravity="end"
+        android:id="@+id/tvEventDay"
         android:textColor="@android:color/white"
         android:layout_width="wrap_content"
         android:background="@android:color/black"
