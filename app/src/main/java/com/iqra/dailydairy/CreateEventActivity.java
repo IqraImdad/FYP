@@ -1,11 +1,16 @@
 package com.iqra.dailydairy;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -19,7 +24,8 @@ import java.util.Calendar;
 
 public class CreateEventActivity<AddReminder> extends AppCompatActivity implements View.OnClickListener {
 
-    TextView btnSelectDate, btnSelectTime, btnSaveEvent;
+
+    TextView btnSelectDate, btnSelectTime, btnSaveEvent, customDialog;
     EditText etEvenName, etVenue, etNote;
     DatePickerDialog picker;
     String selectedYear, selectedDay, selectedMonth, selectedTime = "";
@@ -31,7 +37,9 @@ public class CreateEventActivity<AddReminder> extends AppCompatActivity implemen
         setContentView(R.layout.activity_create_event);
         eventDao = WordRoomDatabase.getDatabase(this).eventDao();
         initComponents();
+
     }
+
 
     private void initComponents() {
         btnSelectDate = findViewById(R.id.btnSelectDate);
@@ -40,11 +48,9 @@ public class CreateEventActivity<AddReminder> extends AppCompatActivity implemen
         btnSelectDate.setOnClickListener(this);
         btnSelectTime.setOnClickListener(this);
         btnSaveEvent.setOnClickListener(this);
-
         etEvenName = findViewById(R.id.etEventName);
         etVenue = findViewById(R.id.etVenue);
         etNote = findViewById(R.id.etNote);
-
     }
 
     @Override
@@ -60,11 +66,11 @@ public class CreateEventActivity<AddReminder> extends AppCompatActivity implemen
                 Event event = new Event();
                 event.setName(etEvenName.getText().toString().trim());
                 event.setVenue(etVenue.getText().toString().trim());
-                event.setNote(etEvenName.getText().toString().trim());
+                event.setNote(etNote.getText().toString().trim());
                 event.setDay(selectedDay);
 
-                if(selectedMonth.length() <2)
-                    selectedMonth= "0"+selectedMonth;
+                if (selectedMonth.length() < 2)
+                    selectedMonth = "0" + selectedMonth;
 
                 event.setMonth(selectedMonth);
                 event.setYear(selectedYear);
@@ -141,6 +147,9 @@ public class CreateEventActivity<AddReminder> extends AppCompatActivity implemen
 
     }
 }
+
+
+
 
 
 

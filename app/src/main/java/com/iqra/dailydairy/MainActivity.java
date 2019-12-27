@@ -35,7 +35,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     RecyclerView rvEvents;
     EventsAdapter mAdapter;
     ArrayList<Event> eventsList = new ArrayList<>();
-    int maxDays;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +45,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         calendar = Calendar.getInstance();
         currentDate = calendar.getTime();
         tvSelectedMonth.setText(formatDate(currentDate));
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
         buildRecyclerView(calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
     }
 
@@ -64,14 +67,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void buildRecyclerView(int _maxdays) {
-
+        ArrayList<String> days = new ArrayList<>();
+        for(int i = 1 ; i <= _maxdays ; i++)
+        {
+            days.add(i+"");
+        }
         rvEvents.setLayoutManager(new LinearLayoutManager(this));
-        rvEvents.setHasFixedSize(true);
-
-        mAdapter = new EventsAdapter(_maxdays,eventsList);
+        mAdapter = new EventsAdapter(days,eventsList);
         rvEvents.setAdapter(mAdapter);
-
-
     }
 
     @Override
@@ -91,17 +94,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         calendar.add(Calendar.MONTH, 1);
         currentDate = calendar.getTime();
         tvSelectedMonth.setText(formatDate(currentDate));
-        maxDays = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
-        buildRecyclerView(maxDays);
-
+        buildRecyclerView(calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
     }
 
     private void previousMonth() {
         calendar.add(Calendar.MONTH, -1);
         currentDate = calendar.getTime();
         tvSelectedMonth.setText(formatDate(currentDate));
-        maxDays = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
-        buildRecyclerView(maxDays);
+        buildRecyclerView(calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
     }
 
     private String formatDate(Date date) {
@@ -115,8 +115,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String selectedMonth2 = selectedDate2.split("-")[0];
 
         eventsList = (ArrayList<Event>) eventDao.getEventsOfMonth(selectedMonth2, selectedYear);
-
-        Toast.makeText(this,  eventDao.getEventsOfMonth(selectedMonth, selectedYear).size()+"", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this,  eventDao.getEventsOfMonth(selectedMonth2, selectedYear).size()+"", Toast.LENGTH_SHORT).show();
         return selectedDate;
     }
 }

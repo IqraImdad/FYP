@@ -14,8 +14,9 @@ import com.iqra.dailydairy.R;
 import java.util.ArrayList;
 
 public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHolder> {
-    private int maxDays;
+    private ArrayList<String> maxDaysList;
     private ArrayList<Event> events;
+    private int currentPosition;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -24,18 +25,21 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHold
         // each data item is just a string in this case
         TextView tvDate;
         TextView tvEventTime;
+        TextView tvEventName;
 
         MyViewHolder(ConstraintLayout v) {
             super(v);
             tvDate = v.findViewById(R.id.tvEventDay);
             tvEventTime = v.findViewById(R.id.tvEventTime);
+            tvEventName = v.findViewById(R.id.tvEventName);
         }
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public EventsAdapter(int _maxdays, ArrayList<Event> _events) {
-        maxDays = _maxdays;
+    public EventsAdapter(ArrayList<String> _daysList, ArrayList<Event> _events) {
+        maxDaysList = _daysList;
         events = _events;
+        currentPosition = 0;
     }
 
     // Create new views (invoked by the layout manager)
@@ -52,30 +56,26 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHold
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyViewHolder holder,final int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        int currentDay = position +1;
-        String d = String.valueOf(currentDay);
-//        if (d.length() < 2) {
-//            d = "0" + d;
-//        }
 
+        if(currentPosition  >= maxDaysList.size())
+            return;
 
-        for ( int i = 0 ; i < events.size() ; i++) {
-            if(Integer.valueOf(events.get(i).getDay()) == currentDay)
-            {
+        for (int i = 0; i < events.size(); i++) {
+            if ( events.get(i).getDay().equalsIgnoreCase(maxDaysList.get(currentPosition))) {
                 holder.tvEventTime.setText(events.get(i).getTime());
+                holder.tvEventName.setText(events.get(i).getName());
             }
         }
-
-        holder.tvDate.setText(d);
-
+        holder.tvDate.setText(maxDaysList.get(position));
+        currentPosition++;
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return maxDays;
+        return maxDaysList.size();
     }
 }
