@@ -1,28 +1,32 @@
 package com.iqra.dailydairy;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
 import com.iqra.dailydairy.adapters.EventsAdapter;
 import com.iqra.dailydairy.room.EventDao;
 import com.iqra.dailydairy.room.WordRoomDatabase;
 
 import java.text.SimpleDateFormat;
-import java.time.YearMonth;
 import java.util.ArrayList;
-
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -34,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     EventDao eventDao;
     RecyclerView rvEvents;
     EventsAdapter mAdapter;
+    HashMap<String,Event> eventsMap = new HashMap<>();
     ArrayList<Event> eventsList = new ArrayList<>();
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,14 +71,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    private void buildRecyclerView(int _maxdays) {
+    private void buildRecyclerView(int _maxDays) {
         ArrayList<String> days = new ArrayList<>();
-        for(int i = 1 ; i <= _maxdays ; i++)
-        {
-            days.add(i+"");
+        eventsMap.clear();
+        for (int i = 1; i <= _maxDays; i++) {
+            days.add(String.valueOf(i));
+          Event event =   findByDay(eventsList,String.valueOf(i));
+           if(event != null)
+           {
+               eventsMap.put(String.valueOf(i),event);
+           }
         }
         rvEvents.setLayoutManager(new LinearLayoutManager(this));
-        mAdapter = new EventsAdapter(days,eventsList);
+        mAdapter = new EventsAdapter(days, eventsMap);
         rvEvents.setAdapter(mAdapter);
     }
 
@@ -107,15 +117,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private String formatDate(Date date) {
         SimpleDateFormat df = new SimpleDateFormat("MMM-yyyy");
         String selectedDate = df.format(date);
-        String selectedMonth = selectedDate.split("-")[0];
         String selectedYear = selectedDate.split("-")[1];
 
         SimpleDateFormat df2 = new SimpleDateFormat("MM-yyyy");
         String selectedDate2 = df2.format(date);
-        String selectedMonth2 = selectedDate2.split("-")[0];
+        String selectedMonth = selectedDate2.split("-")[0];
 
-        eventsList = (ArrayList<Event>) eventDao.getEventsOfMonth(selectedMonth2, selectedYear);
-        Toast.makeText(this,  eventDao.getEventsOfMonth(selectedMonth2, selectedYear).size()+"", Toast.LENGTH_SHORT).show();
+        eventsList = (ArrayList<Event>) eventDao.getEventsOfMonth(selectedMonth, selectedYear);
+        Toast.makeText(this, eventDao.getEventsOfMonth(selectedMonth, selectedYear).size() + "", Toast.LENGTH_SHORT).show();
         return selectedDate;
+    }
+
+    private Event findByDay(List<Event> userList, final String _day) {
+        Optional<Event> userOptional =
+                FluentIterable.from(userList).firstMatch(input -> input.getDay().equalsIgnoreCase(_day));
+        return userOptional.isPresent() ?  userOptional.get() : null; // return user if found otherwise return null if user name don't exist in user list
     }
 }

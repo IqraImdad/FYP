@@ -39,4 +39,8 @@ dependencies {
     annotationProcessor "androidx.room:room-compiler:$rootProject.roomVersion"
     androidTestImplementation "androidx.room:room-testing:$rootProject.roomVersion"
 
+    // 3. Android - Use Guava in your implementation only:
+    implementation("com.google.guava:guava:28.2-android")
+
+
 }

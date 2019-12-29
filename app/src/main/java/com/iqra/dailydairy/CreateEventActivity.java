@@ -37,7 +37,6 @@ public class CreateEventActivity<AddReminder> extends AppCompatActivity implemen
         setContentView(R.layout.activity_create_event);
         eventDao = WordRoomDatabase.getDatabase(this).eventDao();
         initComponents();
-
     }
 
 

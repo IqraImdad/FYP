@@ -1,6 +1,7 @@
 package com.iqra.dailydairy.adapters;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -12,34 +13,35 @@ import com.iqra.dailydairy.Event;
 import com.iqra.dailydairy.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHolder> {
     private ArrayList<String> maxDaysList;
-    private ArrayList<Event> events;
-    private int currentPosition;
+    private HashMap<String,Event> events;
+
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
-    static class MyViewHolder extends RecyclerView.ViewHolder {
-        // each data item is just a string in this case
+
+
+        class MyViewHolder extends RecyclerView.ViewHolder {
         TextView tvDate;
         TextView tvEventTime;
         TextView tvEventName;
-
-        MyViewHolder(ConstraintLayout v) {
-            super(v);
-            tvDate = v.findViewById(R.id.tvEventDay);
-            tvEventTime = v.findViewById(R.id.tvEventTime);
-            tvEventName = v.findViewById(R.id.tvEventName);
+          MyViewHolder(View itemView) {
+            super(itemView);
+            tvDate = itemView.findViewById(R.id.tvEventDay);
+            tvEventTime = itemView.findViewById(R.id.tvEventTime);
+            tvEventName = itemView.findViewById(R.id.tvEventName);
         }
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public EventsAdapter(ArrayList<String> _daysList, ArrayList<Event> _events) {
+    public EventsAdapter(ArrayList<String> _daysList, HashMap<String,Event> _events) {
         maxDaysList = _daysList;
         events = _events;
-        currentPosition = 0;
+
     }
 
     // Create new views (invoked by the layout manager)
@@ -47,11 +49,9 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHold
     @Override
     public EventsAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent,
                                                          int viewType) {
-        // create a new view
-        ConstraintLayout v = (ConstraintLayout) LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.event_list_item, parent, false);
-
-        return new MyViewHolder(v);
+        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+        View listItem= layoutInflater.inflate(R.layout.event_list_item, parent, false);
+        return new MyViewHolder(listItem);
     }
 
     // Replace the contents of a view (invoked by the layout manager)
@@ -59,20 +59,25 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHold
     public void onBindViewHolder(@NonNull MyViewHolder holder,final int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-
-        if(currentPosition  >= maxDaysList.size())
-            return;
-
-        for (int i = 0; i < events.size(); i++) {
-            if ( events.get(i).getDay().equalsIgnoreCase(maxDaysList.get(currentPosition))) {
-                holder.tvEventTime.setText(events.get(i).getTime());
-                holder.tvEventName.setText(events.get(i).getName());
-            }
-        }
         holder.tvDate.setText(maxDaysList.get(position));
-        currentPosition++;
+
+        if(events.containsKey(holder.tvDate.getText().toString()))
+        {
+            holder.tvEventName.setText(events.get(holder.tvDate.getText().toString()).getName());
+            holder.tvEventTime.setText(events.get(holder.tvDate.getText().toString()).getTime());
+        }
+
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
