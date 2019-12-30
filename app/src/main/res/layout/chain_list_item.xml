@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:paddingBottom="8dp"
     android:orientation="horizontal"
-    >
+    android:paddingBottom="8dp">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/btnEvents"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        app:cardElevation="8dp"
         app:cardCornerRadius="8dp"
+        app:cardElevation="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="8dp">
@@ -24,40 +24,29 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:padding="8dp"
-            android:layout_height="wrap_content">
-
-            <CheckBox
-                android:id="@+id/cbAddEvent"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-            </CheckBox>
+            android:layout_height="wrap_content"
+            android:padding="8dp">
 
             <TextView
-                android:id="@+id/tvEventName"
+                android:id="@+id/tvChainName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:layout_marginStart="8dp"
-                app:layout_constraintBottom_toBottomOf="@+id/cbAddEvent"
-                app:layout_constraintStart_toEndOf="@+id/cbAddEvent"
-                app:layout_constraintTop_toTopOf="@+id/cbAddEvent"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:text="Hello" />
 
-            <View
-                android:id="@+id/divider"
-                android:layout_width="1dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="4dp"
-                android:background="?android:attr/listDivider"
-                android:backgroundTint="@android:color/white"
-                app:layout_constraintBottom_toBottomOf="@id/tvEventName"
-                app:layout_constraintStart_toEndOf="@+id/tvEventName"
-                app:layout_constraintTop_toTopOf="@id/tvEventName" />
+            <TextView
+                android:id="@+id/tvChainItemCounts"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="@+id/tvChainName"
+                app:layout_constraintTop_toBottomOf="@+id/tvChainName"
+                tools:text="Hello" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

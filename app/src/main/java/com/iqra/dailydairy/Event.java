@@ -1,11 +1,12 @@
 package com.iqra.dailydairy;
 
+
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 @Entity
-public class Event {
+public class Event   {
     private String name;
     private String venue;
     private String note;
@@ -91,4 +92,6 @@ public class Event {
     public void setRepeatMode(String repeatMode) {
         this.repeatMode = repeatMode;
     }
+
+
 }

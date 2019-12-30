@@ -8,50 +8,58 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.iqra.dailydairy.Chain;
 import com.iqra.dailydairy.Event;
 import com.iqra.dailydairy.OnCheckBoxClicked;
+import com.iqra.dailydairy.OnItemClicked;
 import com.iqra.dailydairy.R;
 
 import java.util.ArrayList;
 
-public class NewChainEventsAdapter extends RecyclerView.Adapter<NewChainEventsAdapter.MyViewHolder> {
+public class ChainsAdapter extends RecyclerView.Adapter<ChainsAdapter.MyViewHolder> {
 
-    private ArrayList<Event> events;
-    private OnCheckBoxClicked mLisenter;
+    private ArrayList<Chain> chains;
+    private OnItemClicked mLisenter;
 
-    public void setCheckBoxClickListener(OnCheckBoxClicked listener) {
-        this.mLisenter = listener;
+
+    public void setOnClickListener(OnItemClicked listener)
+    {
+        mLisenter = listener;
     }
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
     class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView tvEventTime;
-        CheckBox cbAddEvent;
+        TextView tvChainName;
+        TextView tvChainItemCounts;
+        CardView btnEvents;
+
 
         MyViewHolder(View itemView) {
             super(itemView);
-            tvEventTime = itemView.findViewById(R.id.tvEventName);
-            cbAddEvent = itemView.findViewById(R.id.cbAddEvent);
+            tvChainName = itemView.findViewById(R.id.tvChainName);
+            tvChainItemCounts = itemView.findViewById(R.id.tvChainItemCounts);
+            btnEvents = itemView.findViewById(R.id.btnEvents);
         }
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public NewChainEventsAdapter(ArrayList<Event> _events) {
-        events = _events;
+    public ChainsAdapter(ArrayList<Chain> chains) {
+        this.chains = chains;
 
     }
 
     // Create new views (invoked by the layout manager)
     @NonNull
     @Override
-    public NewChainEventsAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent,
-                                                                 int viewType) {
+    public ChainsAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent,
+                                                         int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View listItem = layoutInflater.inflate(R.layout.new_chain_event_list_item, parent, false);
+        View listItem = layoutInflater.inflate(R.layout.chain_list_item, parent, false);
         return new MyViewHolder(listItem);
     }
 
@@ -60,17 +68,17 @@ public class NewChainEventsAdapter extends RecyclerView.Adapter<NewChainEventsAd
     public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.tvEventTime.setText(events.get(position).getName());
+        holder.tvChainName.setText(chains.get(position).getName());
+        holder.tvChainItemCounts.setText(chains.get(position).getEvents().size()+ " Events in Chain");
 
-        holder.cbAddEvent.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                //set your object's last status
-                if (mLisenter != null) {
-                    mLisenter.onCheckBoxClicked(isChecked, position);
-                }
+        holder.btnEvents.setOnClickListener(view -> {
+            if(mLisenter != null)
+            {
+                mLisenter.onItemClicked(position);
             }
         });
+
+
     }
 
     @Override
@@ -86,6 +94,6 @@ public class NewChainEventsAdapter extends RecyclerView.Adapter<NewChainEventsAd
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return events.size();
+        return chains.size();
     }
 }
