@@ -10,7 +10,7 @@
     >
 
     <TextView
-        android:id="@+id/tvEventTime"
+        android:id="@+id/tvEventName"
         android:layout_marginStart="8dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -28,22 +28,22 @@
         android:layout_height="0dp"
         android:background="?android:attr/listDivider"
         android:backgroundTint="@android:color/white"
-        app:layout_constraintBottom_toBottomOf="@id/tvEventTime"
-        app:layout_constraintStart_toEndOf="@+id/tvEventTime"
-        app:layout_constraintTop_toTopOf="@id/tvEventTime" />
+        app:layout_constraintBottom_toBottomOf="@id/tvEventName"
+        app:layout_constraintStart_toEndOf="@+id/tvEventName"
+        app:layout_constraintTop_toTopOf="@id/tvEventName" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
-        android:id="@+id/tvEventName"
+        android:id="@+id/tvEventTime"
         android:text=""
         android:textColor="@android:color/white"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/divider"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.437" />
+          />
 
     <TextView
         android:layout_gravity="end"

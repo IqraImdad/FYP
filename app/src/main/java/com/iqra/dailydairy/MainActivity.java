@@ -2,24 +2,21 @@ package com.iqra.dailydairy;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.iqra.dailydairy.adapters.EventsAdapter;
 import com.iqra.dailydairy.room.EventDao;
-import com.iqra.dailydairy.room.WordRoomDatabase;
+import com.iqra.dailydairy.room.MyRoomDatabase;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,7 +28,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     ImageButton btnNextMonth, btnPreviousMonth;
-    Button btnAdd;
+    Button btnAdd,btnChain;
     TextView tvSelectedMonth;
     Calendar calendar;
     Date currentDate;
@@ -44,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        eventDao = WordRoomDatabase.getDatabase(this).eventDao();
+        eventDao = MyRoomDatabase.getDatabase(this).eventDao();
         initComponents();
 
         calendar = Calendar.getInstance();
@@ -62,9 +59,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnNextMonth = findViewById(R.id.btnNextMonth);
         btnPreviousMonth = findViewById(R.id.btnLastMonth);
         btnAdd = findViewById(R.id.btnAdd);
+        btnChain = findViewById(R.id.btnChain);
         btnNextMonth.setOnClickListener(this);
         btnPreviousMonth.setOnClickListener(this);
         btnAdd.setOnClickListener(this);
+        btnChain.setOnClickListener(this);
 
         tvSelectedMonth = findViewById(R.id.tvSelectedMonth);
         rvEvents = findViewById(R.id.rvEvents);
@@ -97,6 +96,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         if (v == btnAdd) {
             startActivity(new Intent(this, CreateEventActivity.class));
+        }
+        if(v == btnChain)
+        {
+            startActivity(new Intent(this, ChainActivity.class));
         }
     }
 

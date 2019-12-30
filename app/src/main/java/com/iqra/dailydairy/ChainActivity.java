@@ -2,6 +2,7 @@ package com.iqra.dailydairy;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -29,7 +30,7 @@ public class ChainActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View view) {
         if(view == fabAddEvent)
         {
-            
+            startActivity(new Intent(this,CreateNewChainActivity.class));
         }
     }
 }
