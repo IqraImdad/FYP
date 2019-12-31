@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,6 +23,7 @@ public class CreateNewChainActivity extends AppCompatActivity implements OnCheck
     RecyclerView rvEvents;
     Button btnSaveChain;
     EditText etChainName;
+    TextView tvNd;
     EventDao eventDao;
     ChainDao chainDao;
     ArrayList<Event> selectedEvents;
@@ -32,6 +34,7 @@ public class CreateNewChainActivity extends AppCompatActivity implements OnCheck
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_new_chain);
 
+        events = new ArrayList<>();
         eventDao = MyRoomDatabase.getDatabase(this).eventDao();
         chainDao = MyRoomDatabase.getDatabase(this).chainDao();
         selectedEvents = new ArrayList<>();
@@ -44,13 +47,21 @@ public class CreateNewChainActivity extends AppCompatActivity implements OnCheck
         rvEvents = findViewById(R.id.rvEvents);
         btnSaveChain = findViewById(R.id.btnSaveChain);
         etChainName = findViewById(R.id.etChainName);
-
+        tvNd = findViewById(R.id.tvNd);
         btnSaveChain.setOnClickListener(this);
     }
 
     private void buildRecyclerView() {
-        rvEvents.setLayoutManager(new LinearLayoutManager(this));
         events = (ArrayList<Event>) eventDao.getEvents();
+
+        if (events.size() < 1) {
+            tvNd.setVisibility(View.VISIBLE);
+            return;
+        } else {
+            tvNd.setVisibility(View.GONE);
+        }
+
+        rvEvents.setLayoutManager(new LinearLayoutManager(this));
 
         NewChainEventsAdapter adapter = new NewChainEventsAdapter(events);
         adapter.setCheckBoxClickListener(this);
@@ -73,9 +84,9 @@ public class CreateNewChainActivity extends AppCompatActivity implements OnCheck
             if (selectedEvents.size() < 2) {
                 Toast.makeText(this, "Please Select more then one Events", Toast.LENGTH_SHORT).show();
 
-            } else if(etChainName.getText().toString().trim().equalsIgnoreCase("")){
+            } else if (etChainName.getText().toString().trim().equalsIgnoreCase("")) {
                 etChainName.setError("Name Required");
-            }else {
+            } else {
                 Chain chain = new Chain();
                 chain.setName(etChainName.getText().toString().trim());
                 chain.setEvents(selectedEvents);
