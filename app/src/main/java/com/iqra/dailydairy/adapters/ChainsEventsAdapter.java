@@ -24,15 +24,15 @@ public class ChainsEventsAdapter extends RecyclerView.Adapter<ChainsEventsAdapte
 
 
     class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView tvDate;
+
         TextView tvEventTime;
         TextView tvEventName;
 
         MyViewHolder(View itemView) {
             super(itemView);
-            tvDate = itemView.findViewById(R.id.tvEventDay);
-            tvEventTime = itemView.findViewById(R.id.tvEventTime);
             tvEventName = itemView.findViewById(R.id.tvEventName);
+            tvEventTime = itemView.findViewById(R.id.tvEventTime);
+
         }
     }
 
@@ -47,16 +47,18 @@ public class ChainsEventsAdapter extends RecyclerView.Adapter<ChainsEventsAdapte
     public ChainsEventsAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent,
                                                                int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View listItem = layoutInflater.inflate(R.layout.event_list_item, parent, false);
+        View listItem = layoutInflater.inflate(R.layout.chians_event_list_item, parent, false);
         return new MyViewHolder(listItem);
     }
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
+        Event currentEvent = events.get(position);
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.tvEventName.setText(events.get(position).getName());
+        holder.tvEventName.setText(currentEvent.getName());
+        holder.tvEventTime.setText(currentEvent.getDay()+"-"+currentEvent.getMonth()+"-"+currentEvent.getYear());
     }
 
     @Override
