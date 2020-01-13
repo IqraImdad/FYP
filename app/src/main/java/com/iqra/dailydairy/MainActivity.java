@@ -28,14 +28,14 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     ImageButton btnNextMonth, btnPreviousMonth;
-    Button btnAdd,btnChain;
+    Button btnAdd, btnChain;
     TextView tvSelectedMonth;
     Calendar calendar;
     Date currentDate;
     EventDao eventDao;
     RecyclerView rvEvents;
     EventsAdapter mAdapter;
-    HashMap<String,Event> eventsMap = new HashMap<>();
+    HashMap<String, Event> eventsMap = new HashMap<>();
     ArrayList<Event> eventsList = new ArrayList<>();
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,12 +46,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         calendar = Calendar.getInstance();
         currentDate = calendar.getTime();
-        tvSelectedMonth.setText(formatDate(currentDate));
+//        tvSelectedMonth.setText(formatDate(currentDate));
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        tvSelectedMonth.setText(formatDate(currentDate));
         buildRecyclerView(calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
     }
 
@@ -75,11 +76,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         eventsMap.clear();
         for (int i = 1; i <= _maxDays; i++) {
             days.add(String.valueOf(i));
-          Event event =   findByDay(eventsList,String.valueOf(i));
-           if(event != null)
-           {
-               eventsMap.put(String.valueOf(i),event);
-           }
+            Event event = findByDay(eventsList, String.valueOf(i));
+            if (event != null) {
+                eventsMap.put(String.valueOf(i), event);
+            }
         }
         rvEvents.setLayoutManager(new LinearLayoutManager(this));
         mAdapter = new EventsAdapter(days, eventsMap);
@@ -97,8 +97,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (v == btnAdd) {
             startActivity(new Intent(this, CreateEventActivity.class));
         }
-        if(v == btnChain)
-        {
+        if (v == btnChain) {
             startActivity(new Intent(this, ChainActivity.class));
         }
     }
@@ -127,13 +126,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String selectedMonth = selectedDate2.split("-")[0];
 
         eventsList = (ArrayList<Event>) eventDao.getEventsOfMonth(selectedMonth, selectedYear);
-        Toast.makeText(this, eventDao.getEventsOfMonth(selectedMonth, selectedYear).size() + "", Toast.LENGTH_SHORT).show();
+
         return selectedDate;
     }
 
     private Event findByDay(List<Event> userList, final String _day) {
         Optional<Event> userOptional =
                 FluentIterable.from(userList).firstMatch(input -> input.getDay().equalsIgnoreCase(_day));
-        return userOptional.isPresent() ?  userOptional.get() : null; // return user if found otherwise return null if user name don't exist in user list
+        return userOptional.isPresent() ? userOptional.get() : null; // return user if found otherwise return null if user name don't exist in user list
     }
 }

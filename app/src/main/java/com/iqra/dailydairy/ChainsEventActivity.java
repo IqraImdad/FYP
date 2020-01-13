@@ -2,9 +2,10 @@ package com.iqra.dailydairy;
 
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.DatePicker;
+
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -21,37 +22,40 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import static com.iqra.dailydairy.ChainActivity.*;
+
 
 public class ChainsEventActivity extends AppCompatActivity {
 
     RecyclerView rvChainsEvent;
     String selectedYear, selectedDay, selectedMonth;
-    DatePickerDialog picker;
     ChainsEventsAdapter adapter;
+    ArrayList<Event> events = new ArrayList<>();
+    Chain chain = new Chain();
+    DatePickerDialog picker;
     ChainDao chainDao;
-    String id;
+    String id = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chains_event);
         chainDao =  MyRoomDatabase.getDatabase(this).chainDao();
-        id = getIntent().getStringExtra("id");
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            id = String.valueOf(extras.getInt("id"));
+        }
+
+        chain = chainDao.getChains(id);
+        events = chain.getEvents();
         initComponents();
         buildRecyclerView();
     }
 
     private void buildRecyclerView() {
         rvChainsEvent.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new ChainsEventsAdapter(selectedChainsEvents);
+        adapter = new ChainsEventsAdapter(events);
         rvChainsEvent.setAdapter(adapter);
-        adapter.setOnClickListener(new OnItemClicked() {
-            @Override
-            public void onItemClicked(int position) {
-                showDatePicker(position);
-            }
-        });
+        adapter.setOnClickListener(this::showDatePicker);
     }
 
 
@@ -63,27 +67,22 @@ public class ChainsEventActivity extends AppCompatActivity {
 
     private void showDatePicker(int pos) {
         final Calendar cldr = Calendar.getInstance();
-        int day = cldr.get(Calendar.DAY_OF_MONTH);
-        int month = cldr.get(Calendar.MONTH);
-        int year = cldr.get(Calendar.YEAR);
+        int day = Integer.valueOf(events.get(0).getDay());
+        int month =Integer.valueOf(events.get(0).getMonth());
+        int year = Integer.valueOf(events.get(0).getYear());
 
         // date picker dialog
         picker = new DatePickerDialog(this,
-                new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        monthOfYear++;
-                        selectedMonth = String.valueOf(monthOfYear);
-                        selectedYear = String.valueOf(year);
-                        selectedDay = String.valueOf(dayOfMonth);
-                        int difDays = getDifferenceOfDays(pos);
+                (view, year1, monthOfYear, dayOfMonth) -> {
 
-                        updateEvents(difDays);
-
-
-//                        btnSelectDate.setText("Selected Date:  " + dayOfMonth + "-" + monthOfYear + "-" + year);
-                    }
-                }, year, month, day);
+                    monthOfYear++;
+                    selectedMonth = String.valueOf(monthOfYear);
+                    selectedYear = String.valueOf(year1);
+                    selectedDay = String.valueOf(dayOfMonth);
+                    int difDays = getDifferenceOfDays(pos);
+                    updateEvents(difDays);
+//                  btnSelectDate.setText("Selected Date:  " + dayOfMonth + "-" + monthOfYear + "-" + year);
+                }, year, month-1, day);
         picker.show();
 
     }
@@ -91,8 +90,8 @@ public class ChainsEventActivity extends AppCompatActivity {
     private void updateEvents(int days) {
         Calendar calendar = Calendar.getInstance();
 
-        for (int i = 0; i < selectedChainsEvents.size(); i++) {
-            Event e = selectedChainsEvents.get(i);
+        for (int i = 0; i < events.size(); i++) {
+            Event e = events.get(i);
             calendar.set(Integer.parseInt(e.getYear()), Integer.parseInt(e.getMonth()), Integer.parseInt(e.getDay()));
             calendar.add(Calendar.DAY_OF_MONTH ,days);
 
@@ -100,24 +99,23 @@ public class ChainsEventActivity extends AppCompatActivity {
             int month = calendar.get(Calendar.MONTH);
             int year = calendar.get(Calendar.YEAR);
 
-            selectedChainsEvents.get(i).setYear(String.valueOf(year));
-            selectedChainsEvents.get(i).setMonth(String.valueOf(month));
-            selectedChainsEvents.get(i).setDay(String.valueOf(day));
+            events.get(i).setYear(String.valueOf(year));
+            events.get(i).setMonth(String.valueOf(month));
+            events.get(i).setDay(String.valueOf(day));
         }
 
-        chainDao.update(selectedChainsEvents,id);
+        chainDao.update(events,id);
         adapter.notifyDataSetChanged();
         Chain c =  chainDao.getChains(id);
-        selectedChainsEvents.clear();
-        selectedChainsEvents.addAll(c.getEvents());
+        events.clear();
+        events.addAll(c.getEvents());
     }
 
 
     private int getDifferenceOfDays(int pos) {
 
         int days = -1;
-        Event event = selectedChainsEvents.get(pos);
-
+        Event event = events.get(pos);
         SimpleDateFormat myFormat = new SimpleDateFormat("dd MM yyyy");
         String inputString1 = selectedDay + " " + selectedMonth + " " + selectedYear;
         String inputString2 = event.getDay() + " " + event.getMonth() + " " + event.getYear();

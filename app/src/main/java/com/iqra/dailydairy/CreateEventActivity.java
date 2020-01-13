@@ -17,7 +17,7 @@ import com.iqra.dailydairy.room.MyRoomDatabase;
 
 import java.util.Calendar;
 
-public class CreateEventActivity<AddReminder> extends AppCompatActivity implements View.OnClickListener {
+public class CreateEventActivity extends AppCompatActivity implements View.OnClickListener {
 
 
     TextView btnSelectDate, btnSelectTime, btnSaveEvent, customDialog;
@@ -102,7 +102,6 @@ public class CreateEventActivity<AddReminder> extends AppCompatActivity implemen
         mTimePicker.show();
     }
 
-
     private void showDatePicker() {
         final Calendar cldr = Calendar.getInstance();
         int day = cldr.get(Calendar.DAY_OF_MONTH);
@@ -111,16 +110,12 @@ public class CreateEventActivity<AddReminder> extends AppCompatActivity implemen
 
         // date picker dialog
         picker = new DatePickerDialog(CreateEventActivity.this,
-                new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        monthOfYear++;
-                        selectedMonth = String.valueOf(monthOfYear);
-                        selectedYear = String.valueOf(year);
-                        selectedDay = String.valueOf(dayOfMonth);
-
-                        btnSelectDate.setText("Selected Date:  " + dayOfMonth + "-" + monthOfYear + "-" + year);
-                    }
+                (view, year1, monthOfYear, dayOfMonth) -> {
+                    monthOfYear++;
+                    selectedMonth = String.valueOf(monthOfYear);
+                    selectedYear = String.valueOf(year1);
+                    selectedDay = String.valueOf(dayOfMonth);
+                    btnSelectDate.setText("Selected Date:  " + dayOfMonth + "-" + monthOfYear + "-" + year1);
                 }, year, month, day);
         picker.show();
 

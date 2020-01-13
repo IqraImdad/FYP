@@ -23,8 +23,7 @@ public class ChainActivity extends AppCompatActivity implements View.OnClickList
     ArrayList<Chain> chainsList;
     ChainDao chainDao;
     RecyclerView rvChains;
-
-    public static ArrayList<Event> selectedChainsEvents;
+    ArrayList<Event> selectedChainsEvents;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +74,8 @@ public class ChainActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onItemClicked(int position) {
         selectedChainsEvents = chainsList.get(position).getEvents();
-
-        startActivity(new Intent(this, ChainsEventActivity.class).putExtra("id",chainsList.get(position).getId()));
+        Intent intent = new Intent(this, ChainsEventActivity.class);
+        intent.putExtra("id", chainsList.get(position).getId());
+        startActivity(intent);
     }
 }
