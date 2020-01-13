@@ -1,5 +1,6 @@
 package com.iqra.dailydairy;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -14,6 +15,7 @@ public class Chain {
 
     private String name;
 
+    @ColumnInfo(name = "events")
     private ArrayList<Event> events;
 
     public int getId() {

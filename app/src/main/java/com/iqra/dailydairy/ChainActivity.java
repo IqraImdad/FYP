@@ -75,6 +75,7 @@ public class ChainActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onItemClicked(int position) {
         selectedChainsEvents = chainsList.get(position).getEvents();
-        startActivity(new Intent(this, ChainsEventActivity.class));
+
+        startActivity(new Intent(this, ChainsEventActivity.class).putExtra("id",chainsList.get(position).getId()));
     }
 }
