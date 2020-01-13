@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.iqra.dailydairy.Event;
+import com.iqra.dailydairy.OnItemClicked;
 import com.iqra.dailydairy.R;
 
 import java.util.ArrayList;
@@ -16,6 +17,12 @@ import java.util.ArrayList;
 public class ChainsEventsAdapter extends RecyclerView.Adapter<ChainsEventsAdapter.MyViewHolder> {
 
     private ArrayList<Event> events;
+    private OnItemClicked mListener;
+
+    public void setOnClickListener(OnItemClicked listener)
+    {
+        this.mListener = listener;
+    }
 
 
     // Provide a reference to the views for each data item
@@ -27,11 +34,13 @@ public class ChainsEventsAdapter extends RecyclerView.Adapter<ChainsEventsAdapte
 
         TextView tvEventTime;
         TextView tvEventName;
+        TextView tvEditEvent;
 
         MyViewHolder(View itemView) {
             super(itemView);
             tvEventName = itemView.findViewById(R.id.tvEventName);
             tvEventTime = itemView.findViewById(R.id.tvEventTime);
+            tvEditEvent = itemView.findViewById(R.id.tvEditEvent);
 
         }
     }
@@ -50,7 +59,6 @@ public class ChainsEventsAdapter extends RecyclerView.Adapter<ChainsEventsAdapte
         View listItem = layoutInflater.inflate(R.layout.chians_event_list_item, parent, false);
         return new MyViewHolder(listItem);
     }
-
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
@@ -59,6 +67,22 @@ public class ChainsEventsAdapter extends RecyclerView.Adapter<ChainsEventsAdapte
         // - replace the contents of the view with that element
         holder.tvEventName.setText(currentEvent.getName());
         holder.tvEventTime.setText(currentEvent.getDay()+"-"+currentEvent.getMonth()+"-"+currentEvent.getYear());
+
+        holder.tvEditEvent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(mListener != null)
+                {
+                    mListener.onItemClicked(position);
+                }
+            }
+        });
+
+        if(position == 0)
+        {
+            holder.tvEditEvent.setVisibility(View.VISIBLE);
+        }
+
     }
 
     @Override

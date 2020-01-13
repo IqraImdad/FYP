@@ -3,8 +3,6 @@ package com.iqra.dailydairy.adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -12,8 +10,6 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.iqra.dailydairy.Chain;
-import com.iqra.dailydairy.Event;
-import com.iqra.dailydairy.OnCheckBoxClicked;
 import com.iqra.dailydairy.OnItemClicked;
 import com.iqra.dailydairy.R;
 
@@ -44,6 +40,7 @@ public class ChainsAdapter extends RecyclerView.Adapter<ChainsAdapter.MyViewHold
             tvChainName = itemView.findViewById(R.id.tvChainName);
             tvChainItemCounts = itemView.findViewById(R.id.tvChainItemCounts);
             btnEvents = itemView.findViewById(R.id.btnEvents);
+
         }
     }
 
