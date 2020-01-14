@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -81,9 +80,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 eventsMap.put(String.valueOf(i), event);
             }
         }
+
+
         rvEvents.setLayoutManager(new LinearLayoutManager(this));
         mAdapter = new EventsAdapter(days, eventsMap);
         rvEvents.setAdapter(mAdapter);
+        rvEvents.scrollToPosition(calendar.get(Calendar.DAY_OF_MONTH));
     }
 
     @Override
@@ -126,6 +128,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String selectedMonth = selectedDate2.split("-")[0];
 
         eventsList = (ArrayList<Event>) eventDao.getEventsOfMonth(selectedMonth, selectedYear);
+        ArrayList<Event> lst = (ArrayList<Event>) eventDao.getAllEvents();
+
 
         return selectedDate;
     }

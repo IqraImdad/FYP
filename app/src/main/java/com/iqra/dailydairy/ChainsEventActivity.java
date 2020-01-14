@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.iqra.dailydairy.adapters.ChainsEventsAdapter;
 import com.iqra.dailydairy.room.ChainDao;
+import com.iqra.dailydairy.room.EventDao;
 import com.iqra.dailydairy.room.MyRoomDatabase;
 
 import java.text.ParseException;
@@ -32,14 +33,16 @@ public class ChainsEventActivity extends AppCompatActivity {
     ArrayList<Event> events = new ArrayList<>();
     Chain chain = new Chain();
     DatePickerDialog picker;
-    ChainDao chainDao;
     String id = "";
+    ChainDao chainDao;
+    EventDao eventDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chains_event);
         chainDao =  MyRoomDatabase.getDatabase(this).chainDao();
+        eventDao =  MyRoomDatabase.getDatabase(this).eventDao();
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             id = String.valueOf(extras.getInt("id"));
@@ -80,6 +83,7 @@ public class ChainsEventActivity extends AppCompatActivity {
                     selectedYear = String.valueOf(year1);
                     selectedDay = String.valueOf(dayOfMonth);
                     int difDays = getDifferenceOfDays(pos);
+                    Log.d("TAg", "showDatePicker: "+ difDays +"");
                     updateEvents(difDays);
 //                  btnSelectDate.setText("Selected Date:  " + dayOfMonth + "-" + monthOfYear + "-" + year);
                 }, year, month-1, day);
@@ -92,23 +96,29 @@ public class ChainsEventActivity extends AppCompatActivity {
 
         for (int i = 0; i < events.size(); i++) {
             Event e = events.get(i);
-            calendar.set(Integer.parseInt(e.getYear()), Integer.parseInt(e.getMonth()), Integer.parseInt(e.getDay()));
+            calendar.set(Integer.parseInt(e.getYear()), Integer.parseInt(e.getMonth())-1, Integer.parseInt(e.getDay()));
             calendar.add(Calendar.DAY_OF_MONTH ,days);
 
             int day = calendar.get(Calendar.DAY_OF_MONTH);
             int month = calendar.get(Calendar.MONTH);
+            month++;
+            Log.d("TAg", "selectedmonth: "+ month +"");
             int year = calendar.get(Calendar.YEAR);
 
             events.get(i).setYear(String.valueOf(year));
             events.get(i).setMonth(String.valueOf(month));
             events.get(i).setDay(String.valueOf(day));
+
+            eventDao.updateEvent(String.valueOf(day),String.valueOf(month),String.valueOf(year),events.get(i).getId());
+
+
         }
 
         chainDao.update(events,id);
-        adapter.notifyDataSetChanged();
         Chain c =  chainDao.getChains(id);
         events.clear();
         events.addAll(c.getEvents());
+        adapter.notifyDataSetChanged();
     }
 
 

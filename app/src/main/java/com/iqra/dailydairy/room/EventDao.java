@@ -5,6 +5,7 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
+import com.iqra.dailydairy.Chain;
 import com.iqra.dailydairy.Event;
 
 import java.util.List;
@@ -21,6 +22,13 @@ public interface EventDao {
 
     @Query("SELECT * from event ORDER BY day ASC")
     List<Event> getEvents();
+
+    @Query("SELECT * from event")
+    List<Event> getAllEvents();
+
+
+    @Query("update event set day = :day and month = :month and year = :year where id = :id")
+    void updateEvent(String day,String month , String year , int id);
 
     @Query("select * from event where month = :month and year = :year")
     List<Event> getEventsOfMonth(String month, String year);
