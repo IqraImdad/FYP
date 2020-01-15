@@ -14,7 +14,16 @@ public class Event   {
     private String month;
     private String year;
     private String time;
+    private Boolean isMoreThenOne = false;
     private String repeatMode;
+
+    public Boolean getMoreThenOne() {
+        return isMoreThenOne;
+    }
+
+    public void setMoreThenOne(Boolean moreThenOne) {
+        isMoreThenOne = moreThenOne;
+    }
 
     @PrimaryKey(autoGenerate = true)
     @NonNull

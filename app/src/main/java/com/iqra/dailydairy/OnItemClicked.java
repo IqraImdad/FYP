@@ -1,5 +1,5 @@
 package com.iqra.dailydairy;
 
 public interface OnItemClicked {
-      void onItemClicked( int position);
+      void onItemClicked(int position);
 }

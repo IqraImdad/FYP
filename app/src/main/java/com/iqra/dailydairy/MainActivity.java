@@ -2,6 +2,7 @@ package com.iqra.dailydairy;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.common.base.Optional;
 import com.google.common.collect.FluentIterable;
 import com.iqra.dailydairy.adapters.EventsAdapter;
+import com.iqra.dailydairy.fragments.MoreItemsFragment;
 import com.iqra.dailydairy.room.EventDao;
 import com.iqra.dailydairy.room.MyRoomDatabase;
 
@@ -35,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     RecyclerView rvEvents;
     EventsAdapter mAdapter;
     HashMap<String, Event> eventsMap = new HashMap<>();
+    public static ArrayList<Event> moreItems = new ArrayList<>();
     ArrayList<Event> eventsList = new ArrayList<>();
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,18 +77,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ArrayList<String> days = new ArrayList<>();
         eventsMap.clear();
         for (int i = 1; i <= _maxDays; i++) {
-            days.add(String.valueOf(i));
-            Event event = findByDay(eventsList, String.valueOf(i));
+
+            String index = String.valueOf(i);
+
+            days.add(index);
+            Event event = findByDay(eventsList, index);
             if (event != null) {
+                ArrayList<Event> eventsOfDays = (ArrayList<Event>) eventDao.getEventsOfDay(index);
+                if (eventsOfDays.size() > 1)
+                    event.setMoreThenOne(true);
+
                 eventsMap.put(String.valueOf(i), event);
             }
         }
 
-
         rvEvents.setLayoutManager(new LinearLayoutManager(this));
         mAdapter = new EventsAdapter(days, eventsMap);
         rvEvents.setAdapter(mAdapter);
-        rvEvents.scrollToPosition(calendar.get(Calendar.DAY_OF_MONTH));
+        rvEvents.scrollToPosition(calendar.get(Calendar.DAY_OF_MONTH) - 1);
+        mAdapter.setOnViewClickedListener(day -> {
+
+            if(day.length()<2)
+            {
+                day ="0"+day;
+            }
+            moreItems = (ArrayList<Event>) eventDao.getEventsOfDay(day);
+            MoreItemsFragment frag = new MoreItemsFragment();
+            frag.show(getSupportFragmentManager(),"");
+        });
     }
 
     @Override
@@ -128,9 +147,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String selectedMonth = selectedDate2.split("-")[0];
 
         eventsList = (ArrayList<Event>) eventDao.getEventsOfMonth(selectedMonth, selectedYear);
-        ArrayList<Event> lst = (ArrayList<Event>) eventDao.getAllEvents();
-
-
         return selectedDate;
     }
 

@@ -11,6 +11,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.iqra.dailydairy.Event;
+import com.iqra.dailydairy.OnMoreEventsClicked;
 import com.iqra.dailydairy.R;
 
 import java.text.SimpleDateFormat;
@@ -24,6 +25,13 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHold
     private HashMap<String, Event> events;
     private int currentDate;
 
+    OnMoreEventsClicked mlistener;
+
+   public void setOnViewClickedListener(OnMoreEventsClicked listener)
+    {
+        mlistener = listener;
+    }
+
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -34,6 +42,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHold
         TextView tvDate;
         TextView tvEventTime;
         TextView tvEventName;
+        TextView tvMoreEvents;
         ConstraintLayout bgEvents;
 
         MyViewHolder(View itemView) {
@@ -42,6 +51,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHold
             tvEventTime = itemView.findViewById(R.id.tvEventTime);
             tvEventName = itemView.findViewById(R.id.tvEventName);
             bgEvents = itemView.findViewById(R.id.bgEvents);
+            tvMoreEvents = itemView.findViewById(R.id.tvMoreEvents);
         }
     }
 
@@ -81,9 +91,21 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHold
             holder.bgEvents.setBackgroundColor(Color.parseColor("#900C3F"));
         }
 
+        int pos = position + 1 ;
         if (events.containsKey(holder.tvDate.getText().toString())) {
-            holder.tvEventName.setText(events.get(holder.tvDate.getText().toString()).getName());
-            holder.tvEventTime.setText(events.get(holder.tvDate.getText().toString()).getTime());
+            holder.tvEventName.setText(events.get(String.valueOf(pos)).getName());
+            holder.tvEventTime.setText(events.get(String.valueOf(pos)).getTime());
+
+            if(events.get(String.valueOf(pos)).getMoreThenOne()) {
+                holder.tvMoreEvents.setVisibility(View.VISIBLE);
+
+                holder.tvMoreEvents.setOnClickListener(view -> {
+                    if(mlistener!=null)
+                    {
+                        mlistener.onItemClicked(events.get(String.valueOf(pos)).getDay());
+                    }
+                });
+            }
         }
 
     }

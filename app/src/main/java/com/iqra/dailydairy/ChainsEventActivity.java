@@ -69,7 +69,6 @@ public class ChainsEventActivity extends AppCompatActivity {
 
 
     private void showDatePicker(int pos) {
-        final Calendar cldr = Calendar.getInstance();
         int day = Integer.valueOf(events.get(0).getDay());
         int month =Integer.valueOf(events.get(0).getMonth());
         int year = Integer.valueOf(events.get(0).getYear());
@@ -102,16 +101,18 @@ public class ChainsEventActivity extends AppCompatActivity {
             int day = calendar.get(Calendar.DAY_OF_MONTH);
             int month = calendar.get(Calendar.MONTH);
             month++;
-            Log.d("TAg", "selectedmonth: "+ month +"");
+            Log.d("Tag", "selectedmonth: "+ month +"");
             int year = calendar.get(Calendar.YEAR);
 
+            String mMonth = String.valueOf(month);
+            if(mMonth.length() < 2)
+                mMonth = "0"+mMonth;
+
             events.get(i).setYear(String.valueOf(year));
-            events.get(i).setMonth(String.valueOf(month));
+            events.get(i).setMonth(mMonth);
             events.get(i).setDay(String.valueOf(day));
 
-            eventDao.updateEvent(String.valueOf(day),String.valueOf(month),String.valueOf(year),events.get(i).getId());
-
-
+            eventDao.updateEvent(events.get(i));
         }
 
         chainDao.update(events,id);

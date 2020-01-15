@@ -4,6 +4,7 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import com.iqra.dailydairy.Chain;
 import com.iqra.dailydairy.Event;
@@ -26,10 +27,12 @@ public interface EventDao {
     @Query("SELECT * from event")
     List<Event> getAllEvents();
 
-
-    @Query("update event set day = :day and month = :month and year = :year where id = :id")
-    void updateEvent(String day,String month , String year , int id);
+    @Update
+    void updateEvent(Event event);
 
     @Query("select * from event where month = :month and year = :year")
     List<Event> getEventsOfMonth(String month, String year);
+
+    @Query("select * from event where day = :day")
+    List<Event> getEventsOfDay(String day);
 }
