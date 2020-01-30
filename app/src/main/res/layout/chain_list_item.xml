@@ -43,11 +43,23 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:textSize="14sp"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="@+id/tvChainName"
                 app:layout_constraintTop_toBottomOf="@+id/tvChainName"
-                tools:text="Hello" />
+                tools:text="" />
 
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Edit"
+                android:id="@+id/btnEdit"
+                android:padding="10dp"
+                android:textColor="@color/colorBlue"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+            </TextView>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

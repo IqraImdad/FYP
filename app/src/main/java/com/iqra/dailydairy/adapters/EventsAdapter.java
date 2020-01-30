@@ -11,6 +11,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.iqra.dailydairy.Event;
+import com.iqra.dailydairy.OnItemClicked;
 import com.iqra.dailydairy.OnMoreEventsClicked;
 import com.iqra.dailydairy.R;
 
@@ -24,12 +25,16 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHold
     private ArrayList<String> maxDaysList;
     private HashMap<String, Event> events;
     private int currentDate;
+    private boolean isCurrentMonth = false;
+    private OnMoreEventsClicked mlistener;
+    private OnItemClicked mlistener2;
 
-    OnMoreEventsClicked mlistener;
-
-   public void setOnViewClickedListener(OnMoreEventsClicked listener)
-    {
+    public void setOnMoreEventClickedListener(OnMoreEventsClicked listener) {
         mlistener = listener;
+    }
+
+    public void setItemClickListener(OnItemClicked listener) {
+        mlistener2 = listener;
     }
 
 
@@ -56,9 +61,10 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHold
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public EventsAdapter(ArrayList<String> _daysList, HashMap<String, Event> _events) {
+    public EventsAdapter(ArrayList<String> _daysList, HashMap<String, Event> _events, Boolean isCurrentMonth) {
         maxDaysList = _daysList;
         events = _events;
+        this.isCurrentMonth = isCurrentMonth;
 
         Date c = Calendar.getInstance().getTime();
         System.out.println("Current time => " + c);
@@ -86,23 +92,31 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHold
     public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
+        int pos = position + 1;
+        Event curentItem = events.get(String.valueOf(pos));
         holder.tvDate.setText(maxDaysList.get(position));
-        if (position == currentDate) {
+        if (position == currentDate && isCurrentMonth) {
             holder.bgEvents.setBackgroundColor(Color.parseColor("#900C3F"));
         }
 
-        int pos = position + 1 ;
         if (events.containsKey(holder.tvDate.getText().toString())) {
-            holder.tvEventName.setText(events.get(String.valueOf(pos)).getName());
-            holder.tvEventTime.setText(events.get(String.valueOf(pos)).getTime());
 
-            if(events.get(String.valueOf(pos)).getMoreThenOne()) {
+            holder.tvEventName.setText(curentItem.getName());
+            holder.tvEventTime.setText(curentItem.getTime());
+
+            if (curentItem.getMoreThenOne()) {
                 holder.tvMoreEvents.setVisibility(View.VISIBLE);
 
                 holder.tvMoreEvents.setOnClickListener(view -> {
-                    if(mlistener!=null)
-                    {
-                        mlistener.onItemClicked(events.get(String.valueOf(pos)).getDay());
+                    if (mlistener != null) {
+                        mlistener.onItemClicked(curentItem.getDay());
+                    }
+                });
+            } else {
+                holder.bgEvents.setOnClickListener(view -> {
+
+                    if (mlistener != null) {
+                        mlistener.onItemClicked(curentItem.getDay());
                     }
                 });
             }

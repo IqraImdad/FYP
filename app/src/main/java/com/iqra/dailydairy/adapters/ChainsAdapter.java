@@ -66,7 +66,7 @@ public class ChainsAdapter extends RecyclerView.Adapter<ChainsAdapter.MyViewHold
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         holder.tvChainName.setText(chains.get(position).getName());
-        holder.tvChainItemCounts.setText(chains.get(position).getEvents().size()+ " Events in Chain");
+//        holder.tvChainItemCounts.setText(chains.get(position).getEvents().size()+ " Events in Chain");
 
         holder.btnEvents.setOnClickListener(view -> {
             if(mLisenter != null)

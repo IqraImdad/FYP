@@ -5,6 +5,10 @@ import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 @Entity
 public class Event   {
     private String name;
@@ -14,6 +18,7 @@ public class Event   {
     private String month;
     private String year;
     private String time;
+    private Boolean isDeleted = false;
     private Boolean isMoreThenOne = false;
     private String repeatMode;
 
@@ -28,6 +33,14 @@ public class Event   {
     @PrimaryKey(autoGenerate = true)
     @NonNull
     private int id;
+
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
+    }
 
     @NonNull
     public int getId() {
@@ -100,6 +113,21 @@ public class Event   {
 
     public void setRepeatMode(String repeatMode) {
         this.repeatMode = repeatMode;
+    }
+
+    public Date getDate() {
+        Date date;
+
+        String dtStart = getYear() + "-" + getMonth() + "-" + getDay();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            date = format.parse(dtStart);
+            System.out.println(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return date;
     }
 
 

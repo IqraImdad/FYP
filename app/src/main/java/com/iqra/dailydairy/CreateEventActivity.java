@@ -1,16 +1,16 @@
 package com.iqra.dailydairy;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.DatePicker;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.iqra.dailydairy.room.EventDao;
 import com.iqra.dailydairy.room.MyRoomDatabase;
@@ -20,11 +20,15 @@ import java.util.Calendar;
 public class CreateEventActivity extends AppCompatActivity implements View.OnClickListener {
 
 
-    TextView btnSelectDate, btnSelectTime, btnSaveEvent, customDialog;
+    TextView btnSelectDate, btnSelectTime;
+    Button btnSaveEvent, btnDeleteEvent;
     EditText etEvenName, etVenue, etNote;
     DatePickerDialog picker;
     String selectedYear, selectedDay, selectedMonth, selectedTime = "";
     EventDao eventDao;
+    private boolean isUpdating = false;
+    String eventId = "";
+    Event updatingEvent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +36,46 @@ public class CreateEventActivity extends AppCompatActivity implements View.OnCli
         setContentView(R.layout.activity_create_event);
         eventDao = MyRoomDatabase.getDatabase(this).eventDao();
         initComponents();
+
+
+        Bundle bundle = getIntent().getExtras();
+
+        if (bundle != null) {
+            eventId = bundle.getString("id");
+            isUpdating = true;
+            updatingEvent = eventDao.getEvent(eventId);
+            selectedYear = updatingEvent.getYear();
+            selectedMonth = updatingEvent.getMonth();
+            selectedDay = updatingEvent.getDay();
+            selectedTime = updatingEvent.getTime();
+            setSelectedTime();
+            setSelectedDate();
+            etEvenName.setText(updatingEvent.getName());
+            etNote.setText(updatingEvent.getNote());
+            etVenue.setText(updatingEvent.getVenue());
+            btnSaveEvent.setText("Update");
+            btnDeleteEvent.setVisibility(View.VISIBLE);
+        } else {
+            btnDeleteEvent.setVisibility(View.GONE);
+            Calendar calendar = Calendar.getInstance();
+            selectedYear = String.valueOf(calendar.get(Calendar.YEAR));
+            selectedDay = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
+            selectedMonth = String.valueOf(calendar.get(Calendar.MONTH) + 1);
+            setSelectedDate();
+
+        }
+    }
+
+    private void setSelectedDate() {
+
+        btnSelectDate.setText("Selected Date:  " + selectedDay + "-" + selectedMonth + "-" + selectedYear);
+
+    }
+
+    private void setSelectedTime() {
+        if (!selectedTime.equalsIgnoreCase("")) {
+            btnSelectTime.setText("selected Time: " + selectedTime);
+        }
     }
 
 
@@ -39,12 +83,16 @@ public class CreateEventActivity extends AppCompatActivity implements View.OnCli
         btnSelectDate = findViewById(R.id.btnSelectDate);
         btnSelectTime = findViewById(R.id.btnSelectTime);
         btnSaveEvent = findViewById(R.id.btnSaveEvent);
+        btnDeleteEvent = findViewById(R.id.btnDelete);
         btnSelectDate.setOnClickListener(this);
+        btnDeleteEvent.setOnClickListener(this);
         btnSelectTime.setOnClickListener(this);
         btnSaveEvent.setOnClickListener(this);
         etEvenName = findViewById(R.id.etEventName);
         etVenue = findViewById(R.id.etVenue);
         etNote = findViewById(R.id.etNote);
+
+
     }
 
     @Override
@@ -71,9 +119,22 @@ public class CreateEventActivity extends AppCompatActivity implements View.OnCli
                 event.setTime(selectedTime);
                 event.setRepeatMode("D");
 
-                eventDao.insert(event);
-                Toast.makeText(this, "Event Added", Toast.LENGTH_SHORT).show();
+                if (isUpdating) {
+                    event.setId(Integer.parseInt(eventId));
+                    eventDao.updateEvent(event);
+                    Toast.makeText(this, "Event Updated", Toast.LENGTH_LONG).show();
+                    onBackPressed();
+                } else {
+                    eventDao.insert(event);
+                    Toast.makeText(this, "Event Added", Toast.LENGTH_LONG).show();
+                    onBackPressed();
+                }
             }
+        }
+        if (v == btnDeleteEvent) {
+            eventDao.deleteEvent(eventId);
+            Toast.makeText(this, "Event Deleted", Toast.LENGTH_LONG).show();
+            onBackPressed();
         }
     }
 
@@ -115,8 +176,8 @@ public class CreateEventActivity extends AppCompatActivity implements View.OnCli
                     selectedMonth = String.valueOf(monthOfYear);
                     selectedYear = String.valueOf(year1);
                     selectedDay = String.valueOf(dayOfMonth);
-                    btnSelectDate.setText("Selected Date:  " + dayOfMonth + "-" + monthOfYear + "-" + year1);
-                }, year, month, day);
+                    setSelectedDate();
+                }, Integer.valueOf(selectedYear), Integer.valueOf(selectedMonth)-1, Integer.valueOf(selectedDay));
         picker.show();
 
     }

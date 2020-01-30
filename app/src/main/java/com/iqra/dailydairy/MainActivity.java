@@ -1,8 +1,8 @@
 package com.iqra.dailydairy;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ImageButton btnNextMonth, btnPreviousMonth;
     Button btnAdd, btnChain;
     TextView tvSelectedMonth;
+    String todaysMonth;
     Calendar calendar;
     Date currentDate;
     EventDao eventDao;
@@ -40,6 +41,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static ArrayList<Event> moreItems = new ArrayList<>();
     ArrayList<Event> eventsList = new ArrayList<>();
 
+    Boolean isCurrentMonth = false;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -48,7 +51,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         calendar = Calendar.getInstance();
         currentDate = calendar.getTime();
-//        tvSelectedMonth.setText(formatDate(currentDate));
+
+        SimpleDateFormat df2 = new SimpleDateFormat("MM-yyyy");
+        String selectedDate2 = df2.format(currentDate);
+        todaysMonth = selectedDate2.split("-")[0];
     }
 
     @Override
@@ -71,7 +77,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tvSelectedMonth = findViewById(R.id.tvSelectedMonth);
         rvEvents = findViewById(R.id.rvEvents);
 
+        tvSelectedMonth.setOnClickListener(view -> showDatePicker());
+
     }
+
+    private void showDatePicker() {
+        DatePickerDialog picker;
+
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int month = calendar.get(Calendar.MONTH);
+        int year = calendar.get(Calendar.YEAR);
+
+        // date picker dialog
+        picker = new DatePickerDialog(MainActivity.this,
+                (view, year1, monthOfYear, dayOfMonth) -> {
+                    monthOfYear++;
+                    calendar.set(year1,monthOfYear-1,dayOfMonth);
+                    currentDate = calendar.getTime();
+                    tvSelectedMonth.setText(formatDate(currentDate));
+                    buildRecyclerView(calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+                }, year, month, day);
+        picker.show();
+
+    }
+
 
     private void buildRecyclerView(int _maxDays) {
         ArrayList<String> days = new ArrayList<>();
@@ -92,19 +121,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         rvEvents.setLayoutManager(new LinearLayoutManager(this));
-        mAdapter = new EventsAdapter(days, eventsMap);
+        mAdapter = new EventsAdapter(days, eventsMap, isCurrentMonth);
         rvEvents.setAdapter(mAdapter);
         rvEvents.scrollToPosition(calendar.get(Calendar.DAY_OF_MONTH) - 1);
-        mAdapter.setOnViewClickedListener(day -> {
+        mAdapter.setOnMoreEventClickedListener(day -> {
 
-            if(day.length()<2)
-            {
-                day ="0"+day;
+            if (day.length() < 2) {
+                day = "0" + day;
             }
             moreItems = (ArrayList<Event>) eventDao.getEventsOfDay(day);
             MoreItemsFragment frag = new MoreItemsFragment();
-            frag.show(getSupportFragmentManager(),"");
+            frag.show(getSupportFragmentManager(), "");
         });
+
+
     }
 
     @Override
@@ -142,11 +172,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String selectedDate = df.format(date);
         String selectedYear = selectedDate.split("-")[1];
 
+        //to show on main screen
         SimpleDateFormat df2 = new SimpleDateFormat("MM-yyyy");
         String selectedDate2 = df2.format(date);
         String selectedMonth = selectedDate2.split("-")[0];
 
+        if (todaysMonth.equalsIgnoreCase(selectedMonth)) {
+            isCurrentMonth = true;
+        } else
+            isCurrentMonth = false;
+
         eventsList = (ArrayList<Event>) eventDao.getEventsOfMonth(selectedMonth, selectedYear);
+
         return selectedDate;
     }
 

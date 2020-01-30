@@ -21,7 +21,11 @@ public class MoreItemAdapter extends RecyclerView.Adapter<MoreItemAdapter.MyView
     private ArrayList<Event> events;
 
 
+    OnItemClicked mListener;
 
+    public void setOnItemClickListener(OnItemClicked mListener) {
+        this.mListener = mListener;
+    }
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -30,6 +34,7 @@ public class MoreItemAdapter extends RecyclerView.Adapter<MoreItemAdapter.MyView
         TextView tvChainName;
         TextView tvChainItemCounts;
         CardView btnEvents;
+        TextView btnEdit;
 
 
         MyViewHolder(View itemView) {
@@ -37,6 +42,7 @@ public class MoreItemAdapter extends RecyclerView.Adapter<MoreItemAdapter.MyView
             tvChainName = itemView.findViewById(R.id.tvChainName);
             tvChainItemCounts = itemView.findViewById(R.id.tvChainItemCounts);
             btnEvents = itemView.findViewById(R.id.btnEvents);
+            btnEdit = itemView.findViewById(R.id.btnEdit);
 
         }
     }
@@ -67,15 +73,16 @@ public class MoreItemAdapter extends RecyclerView.Adapter<MoreItemAdapter.MyView
         String date = currentItem.getDay() + "-" + currentItem.getMonth() + "-" + currentItem.getYear();
         String time = currentItem.getTime();
         holder.tvChainItemCounts.setText(date + "    "+time);
-//        holder.tvChainItemCounts.setText(events.get(position).get().size()+ " Events in Chain");
-//
-//        holder.btnEvents.setOnClickListener(view -> {
-//            if(mLisenter != null)
-//            {
-//                mLisenter.onItemClicked(position);
-//            }
-//        });
 
+        holder.btnEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(mListener != null)
+                {
+                    mListener.onItemClicked(position);
+                }
+            }
+        });
 
     }
 

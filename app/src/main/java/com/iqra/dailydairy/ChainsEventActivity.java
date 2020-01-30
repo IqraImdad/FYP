@@ -2,10 +2,8 @@ package com.iqra.dailydairy;
 
 
 import android.app.DatePickerDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,9 +18,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
-
 
 
 public class ChainsEventActivity extends AppCompatActivity {
@@ -41,15 +40,23 @@ public class ChainsEventActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chains_event);
-        chainDao =  MyRoomDatabase.getDatabase(this).chainDao();
-        eventDao =  MyRoomDatabase.getDatabase(this).eventDao();
+        chainDao = MyRoomDatabase.getDatabase(this).chainDao();
+        eventDao = MyRoomDatabase.getDatabase(this).eventDao();
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             id = String.valueOf(extras.getInt("id"));
         }
 
         chain = chainDao.getChains(id);
-        events = chain.getEvents();
+        ArrayList<Event> tempEvents = chain.getEvents();
+        for (int i = 0; i < tempEvents.size(); i++) {
+            Event event = eventDao.getEvent(String.valueOf(tempEvents.get(i).getId()));
+            if (event != null) {
+                events.add(eventDao.getEvent(String.valueOf(tempEvents.get(i).getId())));
+            }
+        }
+
+        sortEvents();
         initComponents();
         buildRecyclerView();
     }
@@ -70,7 +77,7 @@ public class ChainsEventActivity extends AppCompatActivity {
 
     private void showDatePicker(int pos) {
         int day = Integer.valueOf(events.get(0).getDay());
-        int month =Integer.valueOf(events.get(0).getMonth());
+        int month = Integer.valueOf(events.get(0).getMonth());
         int year = Integer.valueOf(events.get(0).getYear());
 
         // date picker dialog
@@ -82,10 +89,10 @@ public class ChainsEventActivity extends AppCompatActivity {
                     selectedYear = String.valueOf(year1);
                     selectedDay = String.valueOf(dayOfMonth);
                     int difDays = getDifferenceOfDays(pos);
-                    Log.d("TAg", "showDatePicker: "+ difDays +"");
+                    Log.d("TAg", "showDatePicker: " + difDays + "");
                     updateEvents(difDays);
 //                  btnSelectDate.setText("Selected Date:  " + dayOfMonth + "-" + monthOfYear + "-" + year);
-                }, year, month-1, day);
+                }, year, month - 1, day);
         picker.show();
 
     }
@@ -95,18 +102,18 @@ public class ChainsEventActivity extends AppCompatActivity {
 
         for (int i = 0; i < events.size(); i++) {
             Event e = events.get(i);
-            calendar.set(Integer.parseInt(e.getYear()), Integer.parseInt(e.getMonth())-1, Integer.parseInt(e.getDay()));
-            calendar.add(Calendar.DAY_OF_MONTH ,days);
+            calendar.set(Integer.parseInt(e.getYear()), Integer.parseInt(e.getMonth()) - 1, Integer.parseInt(e.getDay()));
+            calendar.add(Calendar.DAY_OF_MONTH, days);
 
             int day = calendar.get(Calendar.DAY_OF_MONTH);
             int month = calendar.get(Calendar.MONTH);
             month++;
-            Log.d("Tag", "selectedmonth: "+ month +"");
+            Log.d("Tag", "selectedmonth: " + month + "");
             int year = calendar.get(Calendar.YEAR);
 
             String mMonth = String.valueOf(month);
-            if(mMonth.length() < 2)
-                mMonth = "0"+mMonth;
+            if (mMonth.length() < 2)
+                mMonth = "0" + mMonth;
 
             events.get(i).setYear(String.valueOf(year));
             events.get(i).setMonth(mMonth);
@@ -115,11 +122,25 @@ public class ChainsEventActivity extends AppCompatActivity {
             eventDao.updateEvent(events.get(i));
         }
 
-        chainDao.update(events,id);
-        Chain c =  chainDao.getChains(id);
+        chainDao.update(events, id);
+        Chain c = chainDao.getChains(id);
         events.clear();
         events.addAll(c.getEvents());
+        sortEvents();
         adapter.notifyDataSetChanged();
+
+    }
+
+    private void sortEvents() {
+        if (events.size() > 1) {
+            Collections.sort(events, new Comparator<Event>() {
+                public int compare(Event o1, Event o2) {
+                    if (o1.getDate() == null || o2.getDate() == null)
+                        return 0;
+                    return o1.getDate().compareTo(o2.getDate());
+                }
+            });
+        }
     }
 
 

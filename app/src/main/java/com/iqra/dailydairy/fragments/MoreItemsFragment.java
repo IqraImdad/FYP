@@ -1,6 +1,7 @@
 package com.iqra.dailydairy.fragments;
 
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -14,7 +15,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.iqra.dailydairy.CreateEventActivity;
 import com.iqra.dailydairy.MainActivity;
+import com.iqra.dailydairy.OnItemClicked;
 import com.iqra.dailydairy.R;
 import com.iqra.dailydairy.adapters.MoreItemAdapter;
 
@@ -46,6 +49,15 @@ public class MoreItemsFragment extends DialogFragment {
         rvMoreItems.setLayoutManager(new LinearLayoutManager(requireContext()));
         MoreItemAdapter adapter = new MoreItemAdapter(MainActivity.moreItems);
         rvMoreItems.setAdapter(adapter);
+        adapter.setOnItemClickListener(new OnItemClicked() {
+            @Override
+            public void onItemClicked(int position) {
+                dismiss();
+                Intent intent = new Intent(requireContext(), CreateEventActivity.class);
+                intent.putExtra("id",String.valueOf(MainActivity.moreItems.get(position).getId()));
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
