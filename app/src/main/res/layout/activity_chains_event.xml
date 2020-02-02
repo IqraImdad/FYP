@@ -6,9 +6,79 @@
     android:layout_height="match_parent"
     tools:context=".ChainsEventActivity">
 
+    <RadioGroup
+        android:id="@+id/rgEvents"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RadioButton
+            android:id="@+id/rbAllEvents"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="All Events"
+
+            />
+
+        <RadioButton
+            android:id="@+id/rbRange"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Range" />
+    </RadioGroup>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:id="@+id/llFT"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/rgEvents"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:padding="10dp"
+            android:id="@+id/tvFrom"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/holo_blue_light"
+            android:text="Select Date"/>
+
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvNoDI"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Please select date interval to show events"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rgEvents" />
+
+    <TextView
+        android:id="@+id/tvNoEvents"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No Events"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rgEvents" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvChainsEvents"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/llFT" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

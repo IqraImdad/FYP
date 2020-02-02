@@ -10,7 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Entity
-public class Event   {
+public class Event {
     private String name;
     private String venue;
     private String note;
@@ -21,6 +21,7 @@ public class Event   {
     private Boolean isDeleted = false;
     private Boolean isMoreThenOne = false;
     private String repeatMode;
+
 
     public Boolean getMoreThenOne() {
         return isMoreThenOne;
@@ -131,4 +132,7 @@ public class Event   {
     }
 
 
+    public String getlastaction() {
+        return day + "-" + month + "-" + year;
+    }
 }
