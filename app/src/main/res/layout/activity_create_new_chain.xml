@@ -20,24 +20,70 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <RadioGroup
+        android:id="@+id/rgEvents"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/etChainName">
+
+        <RadioButton
+            android:id="@+id/rbAllEvents"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="All Events"
+
+            />
+
+        <RadioButton
+            android:id="@+id/rbRange"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Range" />
+    </RadioGroup>
+
+    <LinearLayout
+        android:id="@+id/llFT"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/rgEvents">
+
+        <TextView
+            android:id="@+id/tvFrom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="Select Date"
+            android:textColor="@android:color/holo_blue_light" />
+
+
+    </LinearLayout>
+
     <TextView
         android:id="@+id/tvNd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="No Events available"
         android:textSize="16sp"
-
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etChainName" />
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvEvents"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/btnSaveChain"
-        app:layout_constraintTop_toBottomOf="@+id/etChainName" />
+        app:layout_constraintTop_toBottomOf="@+id/rgEvents"
+        app:layout_constraintVertical_bias="0.0"
+        tools:layout_editor_absoluteX="0dp" />
 
     <Button
         android:id="@+id/btnSaveChain"
