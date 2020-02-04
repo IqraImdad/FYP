@@ -1,7 +1,7 @@
 package com.iqra.dailydairy;
 
- class RepeatMode {
- public static final String ONCE = "O";
- public static final String MONTHLY = "M";
- public static final String YEARLY = "Y";
+public class RepeatMode {
+ public static final String ONCE = "ONCE";
+ public static final String MONTHLY = "MONTHLY";
+ public static final String YEARLY = "YEARLY";
 }

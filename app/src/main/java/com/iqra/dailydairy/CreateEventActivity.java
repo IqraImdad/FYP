@@ -207,7 +207,8 @@ public class CreateEventActivity extends AppCompatActivity implements View.OnCli
 
     @Override
     public void onRepeatModeSelected(String repeatMode) {
-
+        this.repeatMode = repeatMode;
+        tvRepeatMode.setText(repeatMode);
     }
 }
 
