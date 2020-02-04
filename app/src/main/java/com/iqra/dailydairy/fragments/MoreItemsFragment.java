@@ -27,8 +27,8 @@ import com.iqra.dailydairy.adapters.MoreItemAdapter;
 public class MoreItemsFragment extends DialogFragment {
 
     public static final String TAG = "ResetPasswordFragment";
-    View view;
-    RecyclerView rvMoreItems;
+    private View view;
+    private RecyclerView rvMoreItems;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,8 +26,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
 
     ImageButton btnNextMonth, btnPreviousMonth;
     Button btnAdd, btnChain;
@@ -52,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         calendar = Calendar.getInstance();
         currentDate = calendar.getTime();
 
-        SimpleDateFormat df2 = new SimpleDateFormat("MM-yyyy");
+        SimpleDateFormat df2 = new SimpleDateFormat("MM-yyyy", Locale.getDefault());
         String selectedDate2 = df2.format(currentDate);
         todaysMonth = selectedDate2.split("-")[0];
     }
@@ -69,10 +72,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnPreviousMonth = findViewById(R.id.btnLastMonth);
         btnAdd = findViewById(R.id.btnAdd);
         btnChain = findViewById(R.id.btnChain);
+
+
         btnNextMonth.setOnClickListener(this);
         btnPreviousMonth.setOnClickListener(this);
         btnAdd.setOnClickListener(this);
         btnChain.setOnClickListener(this);
+
 
         tvSelectedMonth = findViewById(R.id.tvSelectedMonth);
         rvEvents = findViewById(R.id.rvEvents);
@@ -92,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         picker = new DatePickerDialog(MainActivity.this,
                 (view, year1, monthOfYear, dayOfMonth) -> {
                     monthOfYear++;
-                    calendar.set(year1,monthOfYear-1,dayOfMonth);
+                    calendar.set(year1, monthOfYear - 1, dayOfMonth);
                     currentDate = calendar.getTime();
                     tvSelectedMonth.setText(formatDate(currentDate));
                     buildRecyclerView(calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
@@ -151,7 +157,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (v == btnChain) {
             startActivity(new Intent(this, ChainActivity.class));
         }
+
     }
+
+
 
     private void nextMonth() {
         calendar.add(Calendar.MONTH, 1);
@@ -177,10 +186,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String selectedDate2 = df2.format(date);
         String selectedMonth = selectedDate2.split("-")[0];
 
-        if (todaysMonth.equalsIgnoreCase(selectedMonth)) {
-            isCurrentMonth = true;
-        } else
-            isCurrentMonth = false;
+        isCurrentMonth = todaysMonth.equalsIgnoreCase(selectedMonth);
 
         eventsList = (ArrayList<Event>) eventDao.getEventsOfMonth(selectedMonth, selectedYear);
 

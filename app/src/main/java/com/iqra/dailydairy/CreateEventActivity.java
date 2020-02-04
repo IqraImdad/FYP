@@ -6,21 +6,23 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.iqra.dailydairy.fragments.SelectRepeatModeFragment;
 import com.iqra.dailydairy.room.EventDao;
 import com.iqra.dailydairy.room.MyRoomDatabase;
 
 import java.util.Calendar;
 
-public class CreateEventActivity extends AppCompatActivity implements View.OnClickListener {
+public class CreateEventActivity extends AppCompatActivity implements View.OnClickListener , OnRepeatModeSelected {
 
-
-    TextView btnSelectDate, btnSelectTime;
+    LinearLayout btnSelectRepeatMode;
+    TextView btnSelectDate, btnSelectTime, tvRepeatMode;
     Button btnSaveEvent, btnDeleteEvent;
     EditText etEvenName, etVenue, etNote;
     DatePickerDialog picker;
@@ -29,6 +31,7 @@ public class CreateEventActivity extends AppCompatActivity implements View.OnCli
     private boolean isUpdating = false;
     String eventId = "";
     Event updatingEvent;
+    String repeatMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +40,7 @@ public class CreateEventActivity extends AppCompatActivity implements View.OnCli
         eventDao = MyRoomDatabase.getDatabase(this).eventDao();
         initComponents();
 
+        repeatMode = RepeatMode.ONCE;
 
         Bundle bundle = getIntent().getExtras();
 
@@ -84,6 +88,10 @@ public class CreateEventActivity extends AppCompatActivity implements View.OnCli
         btnSelectTime = findViewById(R.id.btnSelectTime);
         btnSaveEvent = findViewById(R.id.btnSaveEvent);
         btnDeleteEvent = findViewById(R.id.btnDelete);
+        btnSelectRepeatMode = findViewById(R.id.btnSelectRepeatMode);
+        tvRepeatMode = findViewById(R.id.tvRepeatMode);
+
+        btnSelectRepeatMode.setOnClickListener(this);
         btnSelectDate.setOnClickListener(this);
         btnDeleteEvent.setOnClickListener(this);
         btnSelectTime.setOnClickListener(this);
@@ -136,6 +144,14 @@ public class CreateEventActivity extends AppCompatActivity implements View.OnCli
             Toast.makeText(this, "Event Deleted", Toast.LENGTH_LONG).show();
             onBackPressed();
         }
+        if (v == btnSelectRepeatMode) {
+            showDialogToSelectRepeatMode();
+        }
+    }
+
+    private void showDialogToSelectRepeatMode() {
+        SelectRepeatModeFragment frag = SelectRepeatModeFragment.newInstance(repeatMode);
+        frag.show(getSupportFragmentManager(),"");
     }
 
     private void showTimePicker() {
@@ -144,32 +160,24 @@ public class CreateEventActivity extends AppCompatActivity implements View.OnCli
         int minute = mcurrentTime.get(Calendar.MINUTE);
         TimePickerDialog mTimePicker;
         mTimePicker = new TimePickerDialog(CreateEventActivity.this,
-                new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                        String format = "";
-                        if (selectedHour > 12) {
-                            format = "pm";
-                            selectedHour -= 12;
-                        } else {
-                            format = "am";
-                        }
-                        selectedTime = selectedHour + ":" + selectedMinute + " " + format;
-
-                        btnSelectTime.setText("selected Time: " + selectedTime);
+                (timePicker, selectedHour, selectedMinute) -> {
+                    String format = "";
+                    if (selectedHour > 12) {
+                        format = "pm";
+                        selectedHour -= 12;
+                    } else {
+                        format = "am";
                     }
+                    selectedTime = selectedHour + ":" + selectedMinute + " " + format;
+
+                    btnSelectTime.setText("selected Time: " + selectedTime);
                 }, hour, minute, false);
         mTimePicker.setTitle("Select Time");
         mTimePicker.show();
     }
 
     private void showDatePicker() {
-        final Calendar cldr = Calendar.getInstance();
-        int day = cldr.get(Calendar.DAY_OF_MONTH);
-        int month = cldr.get(Calendar.MONTH);
-        int year = cldr.get(Calendar.YEAR);
 
-        // date picker dialog
         picker = new DatePickerDialog(CreateEventActivity.this,
                 (view, year1, monthOfYear, dayOfMonth) -> {
                     monthOfYear++;
@@ -177,7 +185,7 @@ public class CreateEventActivity extends AppCompatActivity implements View.OnCli
                     selectedYear = String.valueOf(year1);
                     selectedDay = String.valueOf(dayOfMonth);
                     setSelectedDate();
-                }, Integer.valueOf(selectedYear), Integer.valueOf(selectedMonth)-1, Integer.valueOf(selectedDay));
+                }, Integer.valueOf(selectedYear), Integer.valueOf(selectedMonth) - 1, Integer.valueOf(selectedDay));
         picker.show();
 
     }
@@ -194,6 +202,11 @@ public class CreateEventActivity extends AppCompatActivity implements View.OnCli
         }
 
         return true;
+
+    }
+
+    @Override
+    public void onRepeatModeSelected(String repeatMode) {
 
     }
 }
