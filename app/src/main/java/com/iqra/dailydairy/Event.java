@@ -8,6 +8,7 @@ import androidx.room.PrimaryKey;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 @Entity
 public class Event {
@@ -118,9 +119,15 @@ public class Event {
 
     public Date getDate() {
         Date date;
-
-        String dtStart = getYear() + "-" + getMonth() + "-" + getDay();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        String dtStart;
+        SimpleDateFormat format;
+        if (getTime().equalsIgnoreCase("")) {
+            dtStart = getYear() + "-" + getMonth() + "-" + getDay();
+            format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        } else {
+            dtStart = getYear() + "-" + getMonth() + "-" + getDay() + "-" + getTime();
+            format = new SimpleDateFormat("yyyy-MM-dd-hh:mm", Locale.getDefault());
+        }
         try {
             date = format.parse(dtStart);
             System.out.println(date);

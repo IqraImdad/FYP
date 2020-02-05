@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHolder> {
     private ArrayList<String> maxDaysList;
@@ -48,6 +49,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHold
         TextView tvEventTime;
         TextView tvEventName;
         TextView tvMoreEvents;
+        TextView tvEventRepeat;
         ConstraintLayout bgEvents;
 
         MyViewHolder(View itemView) {
@@ -57,6 +59,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHold
             tvEventName = itemView.findViewById(R.id.tvEventName);
             bgEvents = itemView.findViewById(R.id.bgEvents);
             tvMoreEvents = itemView.findViewById(R.id.tvMoreEvents);
+            tvEventRepeat = itemView.findViewById(R.id.tvEventRepeat);
         }
     }
 
@@ -69,7 +72,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHold
         Date c = Calendar.getInstance().getTime();
         System.out.println("Current time => " + c);
 
-        SimpleDateFormat df = new SimpleDateFormat("dd");
+        SimpleDateFormat df = new SimpleDateFormat("dd", Locale.getDefault());
         String formattedDate = df.format(c);
         currentDate = Integer.parseInt(formattedDate);
         currentDate--;
@@ -100,7 +103,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHold
         }
 
         if (events.containsKey(holder.tvDate.getText().toString())) {
-
+            holder.tvEventRepeat.setText(curentItem.getRepeatMode());
             holder.tvEventName.setText(curentItem.getName());
             holder.tvEventTime.setText(curentItem.getTime());
 
@@ -109,14 +112,14 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHold
 
                 holder.tvMoreEvents.setOnClickListener(view -> {
                     if (mlistener != null) {
-                        mlistener.onItemClicked(curentItem.getDay());
+                        mlistener.onItemClicked(curentItem.getDate());
                     }
                 });
             } else {
                 holder.bgEvents.setOnClickListener(view -> {
-
+                    holder.tvMoreEvents.setVisibility(View.GONE);
                     if (mlistener != null) {
-                        mlistener.onItemClicked(curentItem.getDay());
+                        mlistener.onItemClicked(curentItem.getDate());
                     }
                 });
             }

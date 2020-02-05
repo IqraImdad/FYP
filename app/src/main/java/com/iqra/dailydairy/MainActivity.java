@@ -3,10 +3,10 @@ package com.iqra.dailydairy;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +20,7 @@ import com.iqra.dailydairy.fragments.MoreItemsFragment;
 import com.iqra.dailydairy.room.EventDao;
 import com.iqra.dailydairy.room.MyRoomDatabase;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -118,9 +119,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             days.add(index);
             Event event = findByDay(eventsList, index);
             if (event != null) {
-                ArrayList<Event> eventsOfDays = (ArrayList<Event>) eventDao.getEventsOfDay(index);
-                if (eventsOfDays.size() > 1)
+
+                if (!event.getRepeatMode().equalsIgnoreCase(RepeatMode.ONCE) && isDateAfterNow(event.getDate())) {
+                    updateEvent(event);
+                    continue;
+                }
+
+                DateFormat dateFormat = new SimpleDateFormat("yyyy MM d hh mm", Locale.getDefault());
+                String strDate = dateFormat.format(event.getDate());
+                String[] date = strDate.split(" ");
+                ArrayList<Event> eventsOfDays = (ArrayList<Event>) eventDao.getEventsOfDay(date[0], date[1], date[2]);
+
+                if (eventsOfDays.size() > 1) {
                     event.setMoreThenOne(true);
+                    for (int k = 0; k < eventsOfDays.size(); k++) {
+                        if (!eventsOfDays.get(k).getRepeatMode().equalsIgnoreCase(RepeatMode.ONCE) && isDateAfterNow(eventsOfDays.get(k).getDate())) {
+                            updateEvent(eventsOfDays.get(k));
+                        }
+                    }
+
+                }
+
 
                 eventsMap.put(String.valueOf(i), event);
             }
@@ -130,17 +149,57 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mAdapter = new EventsAdapter(days, eventsMap, isCurrentMonth);
         rvEvents.setAdapter(mAdapter);
         rvEvents.scrollToPosition(calendar.get(Calendar.DAY_OF_MONTH) - 1);
-        mAdapter.setOnMoreEventClickedListener(day -> {
-
-            if (day.length() < 2) {
-                day = "0" + day;
-            }
-            moreItems = (ArrayList<Event>) eventDao.getEventsOfDay(day);
-            MoreItemsFragment frag = new MoreItemsFragment();
-            frag.show(getSupportFragmentManager(), "");
+        mAdapter.setOnMoreEventClickedListener(date -> {
+            DateFormat dateFormat = new SimpleDateFormat("yyyy MM d", Locale.getDefault());
+            String strDate = dateFormat.format(date);
+            String[] d = strDate.split(" ");
+            moreItems = (ArrayList<Event>) eventDao.getEventsOfDay(d[0], d[1], d[2]);
+            new MoreItemsFragment().show(getSupportFragmentManager(), "");
+            Log.d("TAG", "buildRecyclerView: " + strDate);
         });
 
 
+    }
+
+    private void updateEvent(Event event) {
+        String repeatMode = event.getRepeatMode();
+
+
+        Date d = event.getDate();
+        Calendar c = Calendar.getInstance();
+        c.setTime(d);
+
+        if (repeatMode.equalsIgnoreCase(RepeatMode.MONTHLY)) {
+            c.add(Calendar.MONTH, 1);
+        } else {
+            c.add(Calendar.DAY_OF_YEAR, 1);
+        }
+
+        d = c.getTime();
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy MM d", Locale.getDefault());
+        String strDate = dateFormat.format(d);
+        String[] d2 = strDate.split(" ");
+        event.setYear(d2[0]);
+        event.setMonth(d2[1]);
+        event.setDay(d2[2]);
+        dateFormat = new SimpleDateFormat("hh:mm", Locale.getDefault());
+        String time = dateFormat.format(d);
+        event.setTime(time);
+        eventDao.updateEvent(event);
+
+    }
+
+    private Boolean isDateAfterNow(Date date) {
+        // Get Current Date Time
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy MM d hh mm", Locale.getDefault());
+        String getCurrentDateTime = sdf.format(c.getTime());
+        String getMyTime = sdf.format(date);
+
+        Log.d("TAG", "isDateAfterNow: "+getCurrentDateTime);
+        Log.d("TAG", "isDateAfterNow: "+getMyTime);
+        return getCurrentDateTime.compareTo(getMyTime) > 0;
     }
 
     @Override
@@ -161,7 +220,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-
     private void nextMonth() {
         calendar.add(Calendar.MONTH, 1);
         currentDate = calendar.getTime();
@@ -177,12 +235,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private String formatDate(Date date) {
-        SimpleDateFormat df = new SimpleDateFormat("MMM-yyyy");
+        SimpleDateFormat df = new SimpleDateFormat("MMM-yyyy", Locale.getDefault());
         String selectedDate = df.format(date);
         String selectedYear = selectedDate.split("-")[1];
 
         //to show on main screen
-        SimpleDateFormat df2 = new SimpleDateFormat("MM-yyyy");
+        SimpleDateFormat df2 = new SimpleDateFormat("MM-yyyy", Locale.getDefault());
         String selectedDate2 = df2.format(date);
         String selectedMonth = selectedDate2.split("-")[0];
 

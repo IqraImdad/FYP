@@ -1,7 +1,8 @@
 package com.iqra.dailydairy;
 
 
+import java.util.Date;
 
 public interface OnMoreEventsClicked {
-      void onItemClicked(String day);
+      void onItemClicked(Date date);
 }

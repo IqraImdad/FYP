@@ -57,6 +57,8 @@ public class CreateEventActivity extends AppCompatActivity implements View.OnCli
             etEvenName.setText(updatingEvent.getName());
             etNote.setText(updatingEvent.getNote());
             etVenue.setText(updatingEvent.getVenue());
+            repeatMode = updatingEvent.getRepeatMode();
+            tvRepeatMode.setText(repeatMode);
             btnSaveEvent.setText("Update");
             btnDeleteEvent.setVisibility(View.VISIBLE);
         } else {
@@ -72,13 +74,13 @@ public class CreateEventActivity extends AppCompatActivity implements View.OnCli
 
     private void setSelectedDate() {
 
-        btnSelectDate.setText("Selected Date:  " + selectedDay + "-" + selectedMonth + "-" + selectedYear);
+        btnSelectDate.setText(String.format("Selected Date:  %s-%s-%s", selectedDay, selectedMonth, selectedYear));
 
     }
 
     private void setSelectedTime() {
         if (!selectedTime.equalsIgnoreCase("")) {
-            btnSelectTime.setText("selected Time: " + selectedTime);
+            btnSelectTime.setText(String.format("selected Time: %s", selectedTime));
         }
     }
 
@@ -125,7 +127,7 @@ public class CreateEventActivity extends AppCompatActivity implements View.OnCli
                 event.setMonth(selectedMonth);
                 event.setYear(selectedYear);
                 event.setTime(selectedTime);
-                event.setRepeatMode("D");
+                event.setRepeatMode(repeatMode);
 
                 if (isUpdating) {
                     event.setId(Integer.parseInt(eventId));

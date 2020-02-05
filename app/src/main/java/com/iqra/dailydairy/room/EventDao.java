@@ -38,8 +38,8 @@ public interface EventDao {
     @Query("select * from event where month = :month and year = :year and isDeleted = 0")
     List<Event> getEventsOfMonth(String month, String year);
 
-    @Query("select * from event where day = :day and isDeleted = 0")
-    List<Event> getEventsOfDay(String day);
+    @Query("select * from event where year = :year  and month = :month and day = :day and isDeleted = 0")
+    List<Event> getEventsOfDay(String year,String month,String day);
 
     @Query("select * from event where year between :yearFrom and :yearTo and  day between :dayFrom and :dayTo and  month between :monthFrom and :monthTo and isDeleted = 0")
     List<Event> getEvents(String yearFrom,String yearTo,String monthFrom, String monthTo ,String dayFrom,String dayTo);
