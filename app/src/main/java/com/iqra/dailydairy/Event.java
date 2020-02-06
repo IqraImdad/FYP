@@ -123,10 +123,10 @@ public class Event {
         SimpleDateFormat format;
         if (getTime().equalsIgnoreCase("")) {
             dtStart = getYear() + "-" + getMonth() + "-" + getDay();
-            format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            format = new SimpleDateFormat("yyyy-MM-d", Locale.getDefault());
         } else {
             dtStart = getYear() + "-" + getMonth() + "-" + getDay() + "-" + getTime();
-            format = new SimpleDateFormat("yyyy-MM-dd-hh:mm", Locale.getDefault());
+            format = new SimpleDateFormat("yyyy-MM-dd-hh:mm aa", Locale.getDefault());
         }
         try {
             date = format.parse(dtStart);

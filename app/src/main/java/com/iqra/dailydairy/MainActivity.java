@@ -119,27 +119,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             days.add(index);
             Event event = findByDay(eventsList, index);
             if (event != null) {
-
-                if (!event.getRepeatMode().equalsIgnoreCase(RepeatMode.ONCE) && isDateAfterNow(event.getDate())) {
-                    updateEvent(event);
-                    continue;
-                }
-
                 DateFormat dateFormat = new SimpleDateFormat("yyyy MM d hh mm", Locale.getDefault());
                 String strDate = dateFormat.format(event.getDate());
                 String[] date = strDate.split(" ");
                 ArrayList<Event> eventsOfDays = (ArrayList<Event>) eventDao.getEventsOfDay(date[0], date[1], date[2]);
-
                 if (eventsOfDays.size() > 1) {
-                    event.setMoreThenOne(true);
                     for (int k = 0; k < eventsOfDays.size(); k++) {
-                        if (!eventsOfDays.get(k).getRepeatMode().equalsIgnoreCase(RepeatMode.ONCE) && isDateAfterNow(eventsOfDays.get(k).getDate())) {
-                            updateEvent(eventsOfDays.get(k));
+                        if (!eventsOfDays.get(k).getRepeatMode().equalsIgnoreCase(RepeatMode.ONCE) && isDateAfterNow(eventsOfDays.get(k))) {
+                            updateEventAccordingToRepeatMode(eventsOfDays.get(k));
                         }
                     }
-
+                } else {
+                    if (isDateAfterNow(event)) {
+                        updateEventAccordingToRepeatMode(event);
+                    }
                 }
-
+                eventsOfDays = (ArrayList<Event>) eventDao.getEventsOfDay(date[0], date[1], date[2]);
+                if (eventsOfDays.size() > 1) {
+                    event = eventsOfDays.get(0);
+                    event.setMoreThenOne(true);
+                } else if (eventsOfDays.size() == 1) {
+                    event = eventsOfDays.get(0);
+                    event.setMoreThenOne(false);
+                } else {
+                    continue;
+                }
 
                 eventsMap.put(String.valueOf(i), event);
             }
@@ -161,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    private void updateEvent(Event event) {
+    private void updateEventAccordingToRepeatMode(Event event) {
         String repeatMode = event.getRepeatMode();
 
 
@@ -169,7 +173,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Calendar c = Calendar.getInstance();
         c.setTime(d);
 
-        if (repeatMode.equalsIgnoreCase(RepeatMode.MONTHLY)) {
+        if (event.getRepeatMode().equalsIgnoreCase(RepeatMode.ONCE)) {
+            eventDao.deleteEvent(String.valueOf(event.getId()));
+            return;
+        } else if (repeatMode.equalsIgnoreCase(RepeatMode.MONTHLY)) {
             c.add(Calendar.MONTH, 1);
         } else {
             c.add(Calendar.DAY_OF_YEAR, 1);
@@ -183,22 +190,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         event.setYear(d2[0]);
         event.setMonth(d2[1]);
         event.setDay(d2[2]);
-        dateFormat = new SimpleDateFormat("hh:mm", Locale.getDefault());
-        String time = dateFormat.format(d);
-        event.setTime(time);
+
         eventDao.updateEvent(event);
+
 
     }
 
-    private Boolean isDateAfterNow(Date date) {
+    private Boolean isDateAfterNow(Event event) {
+        SimpleDateFormat sdf;
+        if (event.getTime().equalsIgnoreCase("")) {
+            sdf = new SimpleDateFormat("yyyy-MM-d", Locale.getDefault());
+        } else {
+            sdf = new SimpleDateFormat("yyyy-MM-d-hh:mm aa", Locale.getDefault());
+        }
+
         // Get Current Date Time
         Calendar c = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy MM d hh mm", Locale.getDefault());
+        Date date = event.getDate();
         String getCurrentDateTime = sdf.format(c.getTime());
         String getMyTime = sdf.format(date);
 
-        Log.d("TAG", "isDateAfterNow: "+getCurrentDateTime);
-        Log.d("TAG", "isDateAfterNow: "+getMyTime);
         return getCurrentDateTime.compareTo(getMyTime) > 0;
     }
 

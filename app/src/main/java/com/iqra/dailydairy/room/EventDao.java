@@ -33,7 +33,7 @@ public interface EventDao {
     void updateEvent(Event event);
 
     @Query("update event set isDeleted = 1 where id = :id")
-    void deleteEvent(String id);
+    void    deleteEvent(String id);
 
     @Query("select * from event where month = :month and year = :year and isDeleted = 0")
     List<Event> getEventsOfMonth(String month, String year);

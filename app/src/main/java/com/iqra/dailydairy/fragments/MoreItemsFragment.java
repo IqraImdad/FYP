@@ -49,14 +49,11 @@ public class MoreItemsFragment extends DialogFragment {
         rvMoreItems.setLayoutManager(new LinearLayoutManager(requireContext()));
         MoreItemAdapter adapter = new MoreItemAdapter(MainActivity.moreItems);
         rvMoreItems.setAdapter(adapter);
-        adapter.setOnItemClickListener(new OnItemClicked() {
-            @Override
-            public void onItemClicked(int position) {
-                dismiss();
-                Intent intent = new Intent(requireContext(), CreateEventActivity.class);
-                intent.putExtra("id",String.valueOf(MainActivity.moreItems.get(position).getId()));
-                startActivity(intent);
-            }
+        adapter.setOnItemClickListener(position -> {
+            dismiss();
+            Intent intent = new Intent(requireContext(), CreateEventActivity.class);
+            intent.putExtra("id",String.valueOf(MainActivity.moreItems.get(position).getId()));
+            startActivity(intent);
         });
     }
 

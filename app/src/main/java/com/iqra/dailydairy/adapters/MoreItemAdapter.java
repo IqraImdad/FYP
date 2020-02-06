@@ -59,7 +59,7 @@ public class MoreItemAdapter extends RecyclerView.Adapter<MoreItemAdapter.MyView
     public MoreItemAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent,
                                                            int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View listItem = layoutInflater.inflate(R.layout.chain_list_item, parent, false);
+        View listItem = layoutInflater.inflate(R.layout.more_items_list_item, parent, false);
         return new MyViewHolder(listItem);
     }
 
@@ -69,10 +69,11 @@ public class MoreItemAdapter extends RecyclerView.Adapter<MoreItemAdapter.MyView
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         Event currentItem = events.get(position);
-        holder.tvChainName.setText(events.get(position).getName() + "\n"+ currentItem.getVenue() );
+        holder.tvChainName.setText(String.format("%s (%s)\n%s", events.get(position).getName(),events.get(position).getRepeatMode(), currentItem.getVenue()));
         String date = currentItem.getDay() + "-" + currentItem.getMonth() + "-" + currentItem.getYear();
         String time = currentItem.getTime();
         holder.tvChainItemCounts.setText(date + "    "+time);
+
 
         holder.btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
