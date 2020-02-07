@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.iqra.dailydairy.Event;
-import com.iqra.dailydairy.OnItemClicked;
+import com.iqra.dailydairy.OnItemClickedWithView;
 import com.iqra.dailydairy.R;
 
 import java.util.ArrayList;
@@ -17,9 +17,9 @@ import java.util.ArrayList;
 public class ChainsEventsAdapter extends RecyclerView.Adapter<ChainsEventsAdapter.MyViewHolder> {
 
     private ArrayList<Event> events;
-    private OnItemClicked mListener;
+    private OnItemClickedWithView mListener;
 
-    public void setOnClickListener(OnItemClicked listener)
+    public void setOnClickListener(OnItemClickedWithView listener)
     {
         this.mListener = listener;
     }
@@ -35,12 +35,14 @@ public class ChainsEventsAdapter extends RecyclerView.Adapter<ChainsEventsAdapte
         TextView tvEventTime;
         TextView tvEventName;
         TextView tvEditEvent;
+        TextView btnDeleteChainsEvent;
 
         MyViewHolder(View itemView) {
             super(itemView);
             tvEventName = itemView.findViewById(R.id.tvEventName);
             tvEventTime = itemView.findViewById(R.id.tvEventTime);
             tvEditEvent = itemView.findViewById(R.id.tvEditEvent);
+            btnDeleteChainsEvent = itemView.findViewById(R.id.btnDeleteChainsEvent);
 
         }
     }
@@ -73,7 +75,15 @@ public class ChainsEventsAdapter extends RecyclerView.Adapter<ChainsEventsAdapte
             public void onClick(View view) {
                 if(mListener != null)
                 {
-                    mListener.onItemClicked(position);
+                    mListener.onItemClicked(holder.tvEditEvent,position);
+                }
+            }
+        });
+        holder.btnDeleteChainsEvent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mListener != null) {
+                    mListener.onItemClicked(holder.btnDeleteChainsEvent, position);
                 }
             }
         });

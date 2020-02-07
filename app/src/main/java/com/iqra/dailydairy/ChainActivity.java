@@ -16,7 +16,7 @@ import com.iqra.dailydairy.room.MyRoomDatabase;
 
 import java.util.ArrayList;
 
-public class ChainActivity extends AppCompatActivity implements View.OnClickListener, OnItemClicked {
+public class ChainActivity extends AppCompatActivity implements View.OnClickListener, OnItemClickedWithView {
 
     FloatingActionButton fabAddEvent;
     TextView tvNd;
@@ -39,20 +39,23 @@ public class ChainActivity extends AppCompatActivity implements View.OnClickList
         chainDao = MyRoomDatabase.getDatabase(this).chainDao();
         chainsList = (ArrayList<Chain>) chainDao.getChains();
         selectedChainsEvents = new ArrayList<>();
-        if (chainsList.size() < 1) {
-            tvNd.setVisibility(View.VISIBLE);
-        } else {
-            tvNd.setVisibility(View.GONE);
-            buildRecyclerView();
-        }
+
+        buildRecyclerView();
     }
 
-    private void buildRecyclerView() {
 
-        rvChains.setLayoutManager(new LinearLayoutManager(this));
-        ChainsAdapter adapter = new ChainsAdapter(chainsList);
-        rvChains.setAdapter(adapter);
-        adapter.setOnClickListener(this);
+
+    private void buildRecyclerView() {
+        if (chainsList.size() < 1) {
+            tvNd.setVisibility(View.VISIBLE);
+            rvChains.setAdapter(null);
+        } else {
+            tvNd.setVisibility(View.GONE);
+            rvChains.setLayoutManager(new LinearLayoutManager(this));
+            ChainsAdapter adapter = new ChainsAdapter(chainsList);
+            rvChains.setAdapter(adapter);
+            adapter.setOnClickListener(this);
+        }
     }
 
     private void initComponents() {
@@ -72,10 +75,16 @@ public class ChainActivity extends AppCompatActivity implements View.OnClickList
     }
 
     @Override
-    public void onItemClicked(int position) {
-        selectedChainsEvents = chainsList.get(position).getEvents();
-        Intent intent = new Intent(this, ChainsEventActivity.class);
-        intent.putExtra("id", chainsList.get(position).getId());
-        startActivity(intent);
+    public void onItemClicked(View view, int position) {
+        if (view.getId() == R.id.btnEvents) {
+            selectedChainsEvents = chainsList.get(position).getEvents();
+            Intent intent = new Intent(this, ChainsEventActivity.class);
+            intent.putExtra("id", chainsList.get(position).getId());
+            startActivity(intent);
+        } else {
+            chainDao.deleteChain(chainsList.get(position));
+            chainsList = (ArrayList<Chain>) chainDao.getChains();
+            buildRecyclerView();
+        }
     }
 }

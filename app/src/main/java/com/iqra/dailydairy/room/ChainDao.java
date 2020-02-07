@@ -1,6 +1,7 @@
 package com.iqra.dailydairy.room;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
@@ -20,6 +21,9 @@ public interface ChainDao {
 
     @Query("DELETE FROM Chain")
     void deleteAll();
+
+    @Delete
+    void deleteChain(Chain chain);
 
     @Query("update chain set events =:events where id = :id")
     void update(ArrayList<Event> events, String id);

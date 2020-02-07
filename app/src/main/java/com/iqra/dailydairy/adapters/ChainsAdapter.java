@@ -10,7 +10,7 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.iqra.dailydairy.Chain;
-import com.iqra.dailydairy.OnItemClicked;
+import com.iqra.dailydairy.OnItemClickedWithView;
 import com.iqra.dailydairy.R;
 
 import java.util.ArrayList;
@@ -18,11 +18,10 @@ import java.util.ArrayList;
 public class ChainsAdapter extends RecyclerView.Adapter<ChainsAdapter.MyViewHolder> {
 
     private ArrayList<Chain> chains;
-    private OnItemClicked mLisenter;
+    private OnItemClickedWithView mLisenter;
 
 
-    public void setOnClickListener(OnItemClicked listener)
-    {
+    public void setOnClickListener(OnItemClickedWithView listener) {
         mLisenter = listener;
     }
 
@@ -32,6 +31,8 @@ public class ChainsAdapter extends RecyclerView.Adapter<ChainsAdapter.MyViewHold
     class MyViewHolder extends RecyclerView.ViewHolder {
         TextView tvChainName;
         TextView tvChainItemCounts;
+        TextView btnEdit;
+        TextView btnDeleteChain;
         CardView btnEvents;
 
 
@@ -39,6 +40,8 @@ public class ChainsAdapter extends RecyclerView.Adapter<ChainsAdapter.MyViewHold
             super(itemView);
             tvChainName = itemView.findViewById(R.id.tvChainName);
             tvChainItemCounts = itemView.findViewById(R.id.tvChainItemCounts);
+            btnEdit = itemView.findViewById(R.id.btnEdit);
+            btnDeleteChain = itemView.findViewById(R.id.btnDeleteChain);
             btnEvents = itemView.findViewById(R.id.btnEvents);
 
         }
@@ -66,15 +69,22 @@ public class ChainsAdapter extends RecyclerView.Adapter<ChainsAdapter.MyViewHold
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         holder.tvChainName.setText(chains.get(position).getName());
+        holder.btnEdit.setVisibility(View.GONE);
 //        holder.tvChainItemCounts.setText(chains.get(position).getEvents().size()+ " Events in Chain");
 
         holder.btnEvents.setOnClickListener(view -> {
-            if(mLisenter != null)
-            {
-                mLisenter.onItemClicked(position);
+            if (mLisenter != null) {
+                mLisenter.onItemClicked(holder.btnEvents, position);
             }
         });
 
+        holder.btnDeleteChain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mLisenter != null)
+                    mLisenter.onItemClicked(holder.btnDeleteChain, position);
+            }
+        });
 
     }
 

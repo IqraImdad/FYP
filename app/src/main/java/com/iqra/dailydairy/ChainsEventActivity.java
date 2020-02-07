@@ -5,8 +5,6 @@ import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.RadioButton;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,7 +22,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 
@@ -74,7 +71,27 @@ public class ChainsEventActivity extends AppCompatActivity {
         rvChainsEvent.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ChainsEventsAdapter(events);
         rvChainsEvent.setAdapter(adapter);
-        adapter.setOnClickListener(this::showDatePicker);
+        adapter.setOnClickListener((view, position) -> {
+            if (view.getId() == R.id.tvEditEvent) {
+                showDatePicker(position);
+            } else {
+                ArrayList<Event> tempEvents = chain.getEvents();
+                events.clear();
+                for (int i = 0; i < tempEvents.size(); i++) {
+                    Event event = eventDao.getEvent(String.valueOf(tempEvents.get(i).getId()));
+                    if (event != null) {
+
+                        if(position == i)
+                            continue;
+
+                        events.add(eventDao.getEvent(String.valueOf(tempEvents.get(i).getId())));
+                    }
+                    chainDao.update(events,id);
+                    getAllEvents();
+                    buildRecyclerView();
+                }
+            }
+        });
 
     }
 
@@ -82,9 +99,6 @@ public class ChainsEventActivity extends AppCompatActivity {
     private void initComponents() {
         rvChainsEvent = findViewById(R.id.rvChainsEvents);
     }
-
-
-
 
 
     private void showDatePicker(int pos) {
@@ -142,7 +156,6 @@ public class ChainsEventActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
 
     }
-
 
 
     private void sortEvents() {
