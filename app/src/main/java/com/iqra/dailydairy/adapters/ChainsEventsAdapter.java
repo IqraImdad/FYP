@@ -67,6 +67,10 @@ public class ChainsEventsAdapter extends RecyclerView.Adapter<ChainsEventsAdapte
         Event currentEvent = events.get(position);
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
+
+        //Remove this line if you want to delete event from chain
+        holder.btnDeleteChainsEvent.setVisibility(View.GONE);
+
         holder.tvEventName.setText(currentEvent.getName());
         holder.tvEventTime.setText(currentEvent.getDay()+"-"+currentEvent.getMonth()+"-"+currentEvent.getYear());
 

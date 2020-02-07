@@ -2,6 +2,7 @@ package com.iqra.dailydairy;
 
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -142,4 +143,18 @@ public class Event {
     public String getlastaction() {
         return day + "-" + month + "-" + year;
     }
+
+
+    @Override
+    public boolean equals(Object v) {
+        boolean retVal = false;
+
+        if (v instanceof Event){
+            Event ptr = (Event) v;
+            retVal = ptr.id == this.id;
+        }
+
+        return retVal;
+    }
+
 }

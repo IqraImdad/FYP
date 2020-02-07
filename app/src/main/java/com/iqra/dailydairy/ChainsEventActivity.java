@@ -5,12 +5,14 @@ import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.iqra.dailydairy.adapters.ChainsEventsAdapter;
+import com.iqra.dailydairy.fragments.AddEventsInChainFragment;
 import com.iqra.dailydairy.room.ChainDao;
 import com.iqra.dailydairy.room.EventDao;
 import com.iqra.dailydairy.room.MyRoomDatabase;
@@ -36,7 +38,8 @@ public class ChainsEventActivity extends AppCompatActivity {
     String id = "";
     ChainDao chainDao;
     EventDao eventDao;
-
+    Button btnAddEvent;
+    public static ArrayList<Event> currentEvents;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,12 +84,12 @@ public class ChainsEventActivity extends AppCompatActivity {
                     Event event = eventDao.getEvent(String.valueOf(tempEvents.get(i).getId()));
                     if (event != null) {
 
-                        if(position == i)
+                        if (position == i)
                             continue;
 
                         events.add(eventDao.getEvent(String.valueOf(tempEvents.get(i).getId())));
                     }
-                    chainDao.update(events,id);
+                    chainDao.update(events, id);
                     getAllEvents();
                     buildRecyclerView();
                 }
@@ -98,6 +101,25 @@ public class ChainsEventActivity extends AppCompatActivity {
 
     private void initComponents() {
         rvChainsEvent = findViewById(R.id.rvChainsEvents);
+        btnAddEvent = findViewById(R.id.btnAddEvent);
+
+        btnAddEvent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                currentEvents = events;
+                AddEventsInChainFragment.newInstance(new AddEventsInChainFragment.OnEventsSelected() {
+                    @Override
+                    public void onEventsSelected(ArrayList<Event> e) {
+                        if(events.size()>0)
+                        {
+                            events.addAll(e);
+                            chainDao.update(events,id);
+                            buildRecyclerView();
+                        }
+                    }
+                }).show(getSupportFragmentManager(),"");
+            }
+        });
     }
 
 
