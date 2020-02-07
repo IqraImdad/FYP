@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             days.add(index);
             Event event = findByDay(eventsList, index);
             if (event != null) {
-                DateFormat dateFormat = new SimpleDateFormat("yyyy MM d hh mm", Locale.getDefault());
+                DateFormat dateFormat = new SimpleDateFormat("yyyy MM d", Locale.getDefault());
                 String strDate = dateFormat.format(event.getDate());
                 String[] date = strDate.split(" ");
                 ArrayList<Event> eventsOfDays = (ArrayList<Event>) eventDao.getEventsOfDay(date[0], date[1], date[2]);
@@ -184,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         d = c.getTime();
 
-        DateFormat dateFormat = new SimpleDateFormat("yyyy MM d", Locale.getDefault());
+        DateFormat dateFormat = new SimpleDateFormat("yyyy MM dd", Locale.getDefault());
         String strDate = dateFormat.format(d);
         String[] d2 = strDate.split(" ");
         event.setYear(d2[0]);
@@ -199,9 +199,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Boolean isDateAfterNow(Event event) {
         SimpleDateFormat sdf;
         if (event.getTime().equalsIgnoreCase("")) {
-            sdf = new SimpleDateFormat("yyyy-MM-d", Locale.getDefault());
+            sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         } else {
-            sdf = new SimpleDateFormat("yyyy-MM-d-hh:mm aa", Locale.getDefault());
+            sdf = new SimpleDateFormat("yyyy-MM-dd-hh:mm aa", Locale.getDefault());
         }
 
         // Get Current Date Time
